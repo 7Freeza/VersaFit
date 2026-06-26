@@ -1,0 +1,27 @@
+<!--
+  Capa: HTML shell (punto de entrada estático)
+  Descripción: Plantilla base de la SPA. Monta el contenedor principal y los portales globales.
+
+  Conexiones:
+    - Carga: /src/main.js (arranque de la aplicación)
+    - IDs: #app (contenido dinámico del router), #toast-root (notificaciones), #modal-root (diálogos)
+
+  Notas:
+    - No añadir lógica aquí; solo estructura y metadatos.
+    - Los estilos globales se importan desde main.js → style.css.
+-->
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proyecto Integrador</title>
+  </head>
+  <body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+    <div id="app"></div>
+    <div id="toast-root" class="fixed bottom-4 right-4 z-50 flex flex-col items-end"></div>
+    <div id="modal-root"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
