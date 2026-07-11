@@ -1,8 +1,33 @@
+# Dependencies
 node_modules/
-dist/
+
+# Environment variables
 .env
-.DS_Store
-*.log
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+
+# Vite
 .vite/
-frontend/package.json.bak
-src/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Test / coverage
+coverage/
