@@ -9,3 +9,7 @@ import dotenv from 'dotenv'
 import authRoutes from './src/routes/auth.routes.js'
 import userRoutes from './src/routes/user.routes.js'
 import exerciseRoutes from './src/routes/exercise.routes.js'
+import { notFoundHandler, errorHandler } from './src/middleware/errorHandler.js'
+import pool from './src/config/db.js'
+
+dotenv.config()
