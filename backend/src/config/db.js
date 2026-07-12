@@ -21,3 +21,12 @@ const pool = new Pool({
 pool.on('error', (error) => {
     console.error ('Unexpected database error:', error.message)
 })
+
+/**
+ * Run a parameterized SQL query
+ * @param {string} text - SQL text with $1, $2 placeholders
+ * @param {array} params - Values for the placeholders
+ */
+export async function query(text, params = []){
+    return pool.query(text, params)
+}
