@@ -23,3 +23,19 @@ app.use(
     })
 )
 app.use(express.json())
+
+app.get('/api/health', async (_req, res) => {
+    try{
+        await pool.query('SELECT 1')
+        res.json({
+            ok: true,
+            message: 'Versafit API is running',
+            database: 'connected'})
+        }catch(error){
+            res.status(503).json({
+                ok: false,
+                message: 'API is running but database is not available',
+                database: 'disconnected'
+            })
+        }
+    })
