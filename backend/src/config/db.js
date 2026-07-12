@@ -30,3 +30,12 @@ pool.on('error', (error) => {
 export async function query(text, params = []){
     return pool.query(text, params)
 }
+
+/**
+ * Get a client from the pool for transactions
+ */
+export async function getClient(){
+    return pool.connect()
+}
+
+export default pool
