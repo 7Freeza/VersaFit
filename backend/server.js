@@ -13,3 +13,12 @@ import { notFoundHandler, errorHandler } from './src/middleware/errorHandler.js'
 import pool from './src/config/db.js'
 
 dotenv.config()
+
+const app = express()
+const PORT = process.env.PORT || 3000
+
+app.use(
+    cors({
+        origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+    })
+)
