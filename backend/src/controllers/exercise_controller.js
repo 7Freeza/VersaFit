@@ -86,3 +86,28 @@ export async function deleteRoutine(req, res) {
     }
 }
 
+export async function completeSession(req, res) {
+    try {
+        const userId = req.user.id
+        const routineId = req.params.id
+
+        const routineCheck = await query('SELECT id FROM routines WHERE id = $1 AND user_id = $2', [routineId, userId])
+
+        if (routineCheck.rows.length === 0) {
+            return res.status(404).json({ message: 'Routine not found' })
+        }
+
+        const result = await query(
+            'INSERT INTO sessions (user_id, routine_id, completed_at) VALUES ($1, $2, NOW()) RETURNING id, user_id, routine_id, completed_at',
+            [userId, routineId]
+        )
+
+        return res.status(201).json({
+            message: 'Session completed successfully',
+            session: result.rows[0],
+        })
+    } catch (error) {
+        console.error('Error in completeSession:', error.message)
+        return res.status(500).json({ message: 'Internal server error' })
+    }
+}
