@@ -1,6 +1,6 @@
 import { query } from '../config/db.js'
 
-export async fuction getProfile(req, res) {
+export async function getProfile(req, res) {
     try {
         const userId = req.user.userId
         const result = await query(
