@@ -32,9 +32,35 @@ export async function createRoutine(req, res) {
             message: 'Routine created successfully', 
             routine: result.rows[0],
         })
-        
+
     } catch (error) {
         console.error('Error in createRoutine:', error.message)
+        return res.status(500).json({ message: 'Internal server error' })
+    }
+}
+
+export async function updateRoutine(req, res) {
+    try {
+        const userId = req.user.id
+        const routineId = req.params.id
+        const { name, description } = req.body
+
+        const result = await query(
+            'UPDATE routines SET name = COALESCE($1, name), description = COALESCE($2, description) WHERE id = $3 AND user_id = $4 RETURNING id, name, description',
+            [name, description, routineId, userId]
+        )
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Routine not found' })
+        }
+
+        return res.status(200).json({ 
+            message: 'Routine updated successfully', 
+            routine: result.rows[0],
+        })
+        
+    } catch (error) {
+        console.error('Error in updateRoutine:', error.message)
         return res.status(500).json({ message: 'Internal server error' })
     }
 }
