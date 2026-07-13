@@ -130,3 +130,43 @@ export async function completeOnboarding(req, res, next) {
     next(error)
   }
 }
+
+export async function addWeight(req, res, next) {
+  try {
+    const errors = validateWeight(req.body)
+    if (errors.length) {
+      throw createError(400, 'Validation failed', errors)
+    }
+
+    const log = await profileModel.addWeightLog(
+      req.user.userId,
+      Number(req.body.weightKg)
+    )
+
+    res.status(201).json({
+      message: 'Weight registered',
+      log: {
+        logId: log.log_id,
+        weightKg: Number(log.weight_kg),
+        recordedAt: log.recorded_at,
+      },
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+export async function weightHistory(req, res, next) {
+  try {
+    const history = await profileModel.getWeightHistory(req.user.userId)
+    res.json({
+      history: history.map((item) => ({
+        logId: item.log_id,
+        weightKg: Number(item.weight_kg),
+        recordedAt: item.recorded_at,
+      })),
+    })
+  } catch (error) {
+    next(error)
+  }
+}
