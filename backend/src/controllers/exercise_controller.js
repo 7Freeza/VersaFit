@@ -111,3 +111,18 @@ export async function completeSession(req, res) {
         return res.status(500).json({ message: 'Internal server error' })
     }
 }
+
+export async function getSessions(req, res) {
+    try {
+        const userId = req.user.id
+
+        const result = await query(
+            'SELECT id, routine_id, completed_at FROM sessions WHERE user_id = $1 ORDER BY completed_at DESC',
+            [userId]
+        )
+        return res.status(200).json({ sessions: result.rows })
+    } catch (error) {
+        console.error('Error in getSessions:', error.message)
+        return res.status(500).json({ message: 'Internal server error' })
+    }
+}
