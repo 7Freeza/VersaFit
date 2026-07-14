@@ -57,3 +57,11 @@ CREATE TABLE physical_profiles (
     onboarding_done BOOLEAN DEFAULT FALSE,
     updated_at TIMESTAMP DEFAULT NOW()
 );
+--WEIGHT LOGS
+
+CREATE TABLE weight_logs(
+    log_id SERIAL PRIMARY KEY,
+    profile_id INT NOT NULL REFERENCES physical_profiles(profile_id) ON DELETE CASCADE,
+    weight_kg NUMERIC(5,2) NOT NULL CHECK (weight_kg > 0 AND weight_kg < 500),
+    recorded_at TIMESTAMP DEFAULT NOW()
+);
