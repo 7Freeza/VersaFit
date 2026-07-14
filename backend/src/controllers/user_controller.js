@@ -1,6 +1,3 @@
-/**
- * User profile and weight tracking controller.
- */
 
 import * as userModel from '../models/user.model.js'
 import * as profileModel from '../models/profile.model.js'
@@ -76,9 +73,6 @@ export async function updateProfile(req, res, next) {
   }
 }
 
-/**
- * Finish onboarding and generate a personalized training plan.
- */
 export async function completeOnboarding(req, res, next) {
   try {
     const errors = validateProfile(req.body)
