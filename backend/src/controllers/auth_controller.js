@@ -1,6 +1,3 @@
-/**
- * Auth controller: register, login and current session.
- */
 
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
