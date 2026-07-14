@@ -79,3 +79,15 @@ CREATE TABLE habits(
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+--HABIT LOGS
+
+CREATE TABLE habit_logs(
+    log_id SERIAL PRIMARY KEY,
+    habit_id IN NOT NULL REFERENCES habits(habit_id) ON DELETE CASCADE,
+    log_date DATE NOT NULL,
+    is_completed BOOLEAN DEFAULT FALSE.
+    value NUMERIC(6,2),
+    notes TEXT,
+    UNIQUE(habit_id, log_date)
+);
