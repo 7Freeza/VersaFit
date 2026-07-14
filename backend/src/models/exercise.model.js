@@ -19,3 +19,22 @@ export async function getActivePlanForUser(userId) {
   )
   return result.rows[0] || null
 }
+
+export async function getRoutinesByPlan(planId, category = null) {
+  let sql = `
+    SELECT routine_id, plan_id, name, description, category,
+           difficulty, duration_min, estimated_kcal
+    FROM routines
+    WHERE plan_id = $1
+  `
+  const params = [planId]
+
+  if (category && category !== 'all') {
+    sql += ` AND category = $2`
+    params.push(category)
+  }
+
+  sql += ` ORDER BY routine_id`
+  const result = await query(sql, params)
+  return result.rows
+}
