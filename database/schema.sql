@@ -17,6 +17,8 @@ DROP TABLE IF EXISTS users CASCADE;
 
 --Create tables
 
+--USERS
+
 CREATE TABLE users(
     user_id SERIAL PRIMARY KEY,
     email VARCHAR(255)UNIQUE NOT NULL,
@@ -25,6 +27,8 @@ CREATE TABLE users(
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+--OBJECTIVES
 
 CREATE TABLE objectives(
     objective_id SERIAL PRIMARY KEY,
