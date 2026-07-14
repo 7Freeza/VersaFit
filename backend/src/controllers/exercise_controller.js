@@ -1,4 +1,20 @@
-import { query } from '../config/db.js'
+import * as exerciseModel from '../models/exercise.model.js'
+import * as userModel from '../models/user.model.js'
+import { generatePersonalizedPlan } from '../utils/planGenerator.js'
+import { validateScheduleDay} from '../middleware/errorHandler.js'
+
+function mappRoutine (row) {
+  return {
+    routineId: row.routine_id,
+    planId: row.plan_id,
+    name: row.name,
+    description: row.description,
+    category: row.category,
+    difficulty: row.difficulty,
+    durationMin: row.duration_min,
+    estimateKcal: row.estimate_kcal,
+  }
+}
 
 export async function getRoutines(req, res) {
     try {
