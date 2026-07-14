@@ -35,3 +35,25 @@ CREATE TABLE objectives(
     name VARCHAR(100)NOT NULL,
     description TEXT
 );
+
+--PHYSICAL PROFILES
+
+CREATE TABLE physical_profiles (
+    profile_id SERIAL PRIMARY KEY,
+    user_id INT UNIQUE NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    objective_id INT REFERENCES objectives(objective_id),
+    age INT CHECK (age IS NULL OR (age >= 12 AND age <= 100)),
+    height_cm NUMERIC(5,2) CHECK (height_cm IS NULL OR (height_cm >= 100 AND height_cm <= 250)),
+    sex VARCHAR(10) CHECK (sex IS NULL OR sex IN ('M', 'F', 'Other')),
+    activity_level VARCHAR(30) CHECK (
+        activity_level IS NULL OR activity_level IN (
+            'sedentary', 'light', 'moderate', 'active'
+        )
+    ),
+    intensity VARCHAR(20) CHECK (
+        intensity IS NULL OR intensity IN ('low', 'medium', 'high')
+    ),
+    preferences TEXT,
+    onboarding_done BOOLEAN DEFAULT FALSE,
+    updated_at TIMESTAMP DEFAULT NOW()
+);
