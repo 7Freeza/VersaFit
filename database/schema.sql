@@ -65,3 +65,17 @@ CREATE TABLE weight_logs(
     weight_kg NUMERIC(5,2) NOT NULL CHECK (weight_kg > 0 AND weight_kg < 500),
     recorded_at TIMESTAMP DEFAULT NOW()
 );
+
+--HABITS
+
+CREATE TABLE habits(
+    habit_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    habit_type VARCHAR(30) NOT NULL CHECK(
+        habit_type IN('exercise', 'sleep', 'nutrition', 'other')
+    ),
+    name VARCHAR(100) NOT NULL,
+    target_frequency INT,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
