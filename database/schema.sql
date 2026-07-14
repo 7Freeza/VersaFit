@@ -26,3 +26,8 @@ CREATE TABLE users(
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+CREATE TABLE objectives(
+    objective_id SERIAL PRIMARY KEY,
+    name VARCHAR(100)NOT NULL,
+    description TEXT
+);
