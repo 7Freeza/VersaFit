@@ -115,4 +115,14 @@ CREATE TABLE routines(
     difficulty VARCHAR(30)DEFAULT 'beginner',
     duration_min INT DEFAULT 30,
     estimated_kcal INT DEFAULT 200
-)
+);
+
+--EXERCISES
+
+CREATE TABLE exercises(
+    exercise_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    muscle_group VARCHAR(50),
+    description TEXT,
+    external_id VARCHAR(50)
+);
