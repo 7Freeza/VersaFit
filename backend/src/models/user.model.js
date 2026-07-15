@@ -19,3 +19,13 @@ export async function findUserById(userId) {
   )
   return result.rows[0] || null
 }
+
+export async function createUser({ fullName, email, passwordHash }) {
+  const result = await query(
+    `INSERT INTO users (full_name, email, password_hash)
+     VALUES ($1, $2, $3)
+     RETURNING user_id, email, full_name, created_at`,
+    [fullName.trim(), email.toLowerCase().trim(), passwordHash]
+  )
+  return result.rows[0]
+}
