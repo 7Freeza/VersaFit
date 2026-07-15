@@ -18,12 +18,59 @@ function mappRoutine (row) {
 
 export async function getRoutines(req, res) {
     try {
-        const userId = req.user.id
+        let plan = await exerciseModel.getActivePlanForUser(req.user.userId)
 
-        const result = await query('SELECT id, name, description FROM routines WHERE user_id = $1', [userId])
+        if (!plan) {
+            const profile = await userModel.getUserWithProfile(req.user.userId)
+            if (profile && profile.onboarding_done) {
+                const payload = await generatePersonalizedPlan(profile)
+                await exerciseModel.saveGeneratedPlan(req.user.userId, payload)
+                plan = await exerciseModel.getActivePlanForUser(req.user.userId)
+            }
+        }
+        
+        if (!plan) {
+            return res.json({
+                hasPlan: false,
+                plan: null,
+                routines: [],
+                schedule: [],
+                completedThisWeek: 0,
+                totalDays: 7,
+                today: null,
+            })
+        }
+        
+        const category = req.query.category || 'all'
+        let routines = await exerciseModel.getRoutinesByPlan(plan.plan_id, category)
+        
+        routines = routines.filter((r) => r.category !== 'flexibility')
 
-        return res.status(200).json({ routines: result.rows })
+        await exerciseModel.ensureDefaultSchedule(req.user.userId)
+        const weekStatus = await exerciseModel.getWeeklyPlanStatus(req.user.userId)
 
+        res.json({
+            hasPlan: true,
+            plan: {
+                planId: plan.plan_id,
+                durationWeeks: plan.duration_weeks,
+                objectiveId: plan.objective_id,
+            },
+            routines: routines.map(mapRoutine),
+            schedule: weekStatus.schedule.map((day) => ({
+                scheduleId: day.schedule_id,
+                dayName: day.day_name,
+                isRestDay: day.is_rest_day,
+                routineId: day.routine_id,
+                routineName: day.routine_name,
+                category: day.category,
+                date: day.date,
+                status: day.status,
+            })),
+            completedThisWeek: weekStatus.completedThisWeek,
+            totalDays: weekStatus.totalDays,
+            today: weekStatus.today,
+        })
     } catch (error) {
         console.error('Error in getRoutines:', error.message)
         return res.status(500).json({ message: 'Internal server error' })
