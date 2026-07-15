@@ -248,3 +248,31 @@ export async function regeneratePlan(req, res, next) {
         next(error)
     }
 }
+
+export async function getMotivation(_req, res, next) {
+    try {
+        const controller = new AbortController()
+        const timer = setTimeout(() => controller.abort(), 4000)
+        const response = await fetch(
+            'https://api.quotable.io/random?tags=motivational|sports|success',
+            { signal: controller.signal }
+        )
+        clearTimeout(timer)
+        if (!response.ok) {
+            return res.json({
+                quote: 'Small steps, big changes.',
+                author: 'VersaFit',
+            })
+        }
+        const data = await response.json()
+        res.json({
+            quote: data.content,
+            author: data.author,
+        })
+    } catch (error) {
+        res.json({
+            quote: 'Discipline today, strength forever.',
+            author: 'VersaFit',
+        })
+    }
+}
