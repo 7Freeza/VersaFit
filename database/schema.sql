@@ -103,3 +103,5 @@ CREATE TABLE training_plans(
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+--
