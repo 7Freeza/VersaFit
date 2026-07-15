@@ -9,3 +9,13 @@ export async function findUserByEmail(email) {
   )
   return result.rows[0] || null
 }
+
+export async function findUserById(userId) {
+  const result = await query(
+    `SELECT user_id, email, full_name, is_active, created_at
+     FROM users
+     WHERE user_id = $1`,
+    [userId]
+  )
+  return result.rows[0] || null
+}
