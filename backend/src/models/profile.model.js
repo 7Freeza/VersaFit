@@ -12,3 +12,90 @@ export async function getObjectives() {
   )
   return result.rows
 }
+
+export async function upsertProfile(userId, data) {
+  const client = await getClient()
+
+  try {
+    await client.query('BEGIN')
+
+    const existing = await client.query(
+      `SELECT profile_id FROM physical_profiles WHERE user_id = $1`,
+      [userId]
+    )
+
+    let profileId
+
+    if (existing.rows[0]) {
+      const updated = await client.query(
+        `UPDATE physical_profiles SET
+           objective_id = COALESCE($2, objective_id),
+           age = COALESCE($3, age),
+           height_cm = COALESCE($4, height_cm),
+           sex = COALESCE($5, sex),
+           activity_level = COALESCE($6, activity_level),
+           intensity = COALESCE($7, intensity),
+           preferences = COALESCE($8, preferences),
+           onboarding_done = COALESCE($9, onboarding_done),
+           updated_at = NOW()
+         WHERE user_id = $1
+         RETURNING profile_id`,
+        [
+          userId,
+          data.objectiveId ?? null,
+          data.age ?? null,
+          data.heightCm ?? null,
+          data.sex ?? null,
+          data.activityLevel ?? null,
+          data.intensity ?? null,
+          data.preferences ?? null,
+          data.onboardingDone ?? null,
+        ]
+      )
+      profileId = updated.rows[0].profile_id
+    } else {
+      const created = await client.query(
+        `INSERT INTO physical_profiles (
+           user_id, objective_id, age, height_cm, sex,
+           activity_level, intensity, preferences, onboarding_done
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         RETURNING profile_id`,
+        [
+          userId,
+          data.objectiveId ?? null,
+          data.age ?? null,
+          data.heightCm ?? null,
+          data.sex ?? null,
+          data.activityLevel ?? null,
+          data.intensity ?? null,
+          data.preferences ?? null,
+          data.onboardingDone ?? false,
+        ]
+      )
+      profileId = created.rows[0].profile_id
+    }
+
+    if (data.weightKg != null) {
+      await client.query(
+        `INSERT INTO weight_logs (profile_id, weight_kg)
+         VALUES ($1, $2)`,
+        [profileId, data.weightKg]
+      )
+    }
+
+    if (data.fullName) {
+      await client.query(
+        `UPDATE users SET full_name = $2 WHERE user_id = $1`,
+        [userId, data.fullName.trim()]
+      )
+    }
+
+    await client.query('COMMIT')
+    return profileId
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
