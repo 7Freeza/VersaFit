@@ -29,3 +29,43 @@ export async function createUser({ fullName, email, passwordHash }) {
   )
   return result.rows[0]
 }
+
+export async function getUserWithProfile(userId) {
+  const result = await query(
+    `SELECT
+       u.user_id,
+       u.email,
+       u.full_name,
+       u.created_at,
+       p.profile_id,
+       p.age,
+       p.height_cm,
+       p.sex,
+       p.activity_level,
+       p.intensity,
+       p.preferences,
+       p.onboarding_done,
+       p.objective_id,
+       o.name AS objective_name,
+       (
+         SELECT w.weight_kg
+         FROM weight_logs w
+         WHERE w.profile_id = p.profile_id
+         ORDER BY w.recorded_at DESC
+         LIMIT 1
+       ) AS latest_weight,
+       (
+         SELECT w.recorded_at
+         FROM weight_logs w
+         WHERE w.profile_id = p.profile_id
+         ORDER BY w.recorded_at DESC
+         LIMIT 1
+       ) AS latest_weight_at
+     FROM users u
+     LEFT JOIN physical_profiles p ON p.user_id = u.user_id
+     LEFT JOIN objectives o ON o.objective_id = p.objective_id
+     WHERE u.user_id = $1`,
+    [userId]
+  )
+  return result.rows[0] || null
+}
