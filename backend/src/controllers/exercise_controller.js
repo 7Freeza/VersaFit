@@ -20,7 +20,7 @@ function mapRoutine(row) {
 export async function getDashboard(req, res, next) {
     try {
         let plan = await exerciseModel.getActivePlanForUser(req.user.userId)
-        
+
         if (!plan) {
             const profile = await userModel.getUserWithProfile(req.user.userId)
             if (profile && profile.onboarding_done) {
@@ -90,7 +90,7 @@ export async function getRoutineDetail(req, res, next) {
         }
 
         const exercises = await exerciseModel.getRoutineExercises(routineId)
-        
+
         const session = await exerciseModel.getSessionForToday(
             req.user.userId,
             routineId
@@ -200,16 +200,16 @@ export async function toggleExercise(req, res, next) {
         const sessionId = Number(req.params.sessionId)
         const exerciseId = Number(req.params.exerciseId)
         const isDone = Boolean(req.body.isDone)
-        
+
         const ownership = await exerciseModel.getSessionCheckoffs(sessionId)
         if (!ownership.length) {
-        
+
         }
         const updated = await exerciseModel.toggleCheckoff(sessionId, exerciseId, isDone)
         if (!updated) {
             throw createError(404, 'Checkoff not found for this session')
         }
-        
+
         const all = await exerciseModel.getSessionCheckoffs(sessionId)
         const allDone = all.length > 0 && all.every((item) => item.is_done)
         let session = null
@@ -224,6 +224,25 @@ export async function toggleExercise(req, res, next) {
                 isDone: updated.is_done,
             },
             sessionCompleted: Boolean(session),
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export async function regeneratePlan(req, res, next) {
+    try {
+        const profile = await userModel.getUserWithProfile(req.user.userId)
+        if (!profile || !profile.onboarding_done) {
+            throw createError(400, 'Complete onboarding before generating a plan')
+        }
+        const payload = await generatePersonalizedPlan(profile)
+        const saved = await exerciseModel.saveGeneratedPlan(req.user.userId, payload)
+        res.json({
+            message: 'New training plan generated',
+            source: payload.source,
+            planId: saved.planId,
+            routines: saved.routines.map(mapRoutine),
         })
     } catch (error) {
         next(error)
