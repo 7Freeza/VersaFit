@@ -182,4 +182,11 @@ CREATE TABLE exercise_checkoffs(
     is_done BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (session_id , exercise_id)
 );
-            
+
+-- HELPFUL INDEXES FOR COMMON QUERIES
+
+CREATE INDEX idx_weight_logs_profile ON weight_logs(profile_id);
+CREATE INDEX idx_habits_user ON habits(habit_id);
+CREATE INDEX idx_routines_plan ON routines(plan_id);
+CREATE INDEX idx_sessions_user_date ON workout_sessions(user_id , session_date);
+CREATE INDEX idx_weekly_schedule ON weekly_schedule(user_id);
