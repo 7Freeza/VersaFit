@@ -97,3 +97,22 @@ function pickExercises(list, count) {
 
     return selected
 }
+
+function setsRepsForIntensity(intensity, category) {
+  if (category === 'cardio') {
+    if (intensity === 'high') return { sets: 4, reps: 20, restSeconds: 30 }
+    if (intensity === 'low') return { sets: 2, reps: 15, restSeconds: 45 }
+    return { sets: 3, reps: 18, restSeconds: 40 }
+  }
+
+  if (category === 'hiit') {
+    if (intensity === 'high') return { sets: 5, reps: 15, restSeconds: 20 }
+    if (intensity === 'low') return { sets: 3, reps: 10, restSeconds: 40 }
+    return { sets: 4, reps: 12, restSeconds: 30 }
+  }
+
+  // strength
+  if (intensity === 'high') return { sets: 4, reps: 8, restSeconds: 90 }
+  if (intensity === 'low') return { sets: 3, reps: 12, restSeconds: 60 }
+  return { sets: 3, reps: 10, restSeconds: 75 }
+}
