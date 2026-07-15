@@ -32,6 +32,52 @@ export function validateLogin(body){
     if(!password){
         errors.push('Password is required')
     }
+
+    return errors
+}
+
+export function validateProfile(body){
+    const errors = []
+    const {age, heightCm, weightKg, sex} = body
     
+    if(age !== undefined && age !== null){
+        const ageNum = Number(age)
+        if(Number.isNaN(ageNum) || ageNum < 12 || ageNum > 100){
+            errors.push('Age must be between 12 and 100')
+        }
+    }
+
+    if(heightCm !== undefined && heightCm !== null){
+        const height = Number(heightCm)
+        if(Number.isNaN(height) || height < 100 || height > 250){
+            errors.push('Height must be between 100 and 250 cm')
+        }
+    }
+
+    if(weightKg !== undefined && weightKg !== null){
+        const weight = Number(weightKg)
+        if(Number.isNaN(weight) || weight < 30 || weight > 300){
+            errors.push('Weight must be between 30 and 300 kg')
+        }
+    }
+
+    if (sex && !['M', 'F', 'Other'].includes(sex)) {
+    errors.push('Sex must be M, F or Other')
+    }
+
+    if (activityLevel && !['sedentary', 'light', 'moderate', 'active'].includes(activityLevel)) {
+    errors.push('Invalid activity level')
+    }
+
+    if (intensity && !['low', 'medium', 'high'].includes(intensity)) {
+    errors.push('Intensity must be low, medium or high')
+    }
+
+    if (objectiveId !== undefined && objectiveId !== null) {
+        const id = Number(objectiveId)
+        if (Number.isNaN(id) || id < 1) {
+        errors.push('Invalid objective')
+        }
+    }
     return errors
 }
