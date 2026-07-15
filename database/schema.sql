@@ -84,7 +84,7 @@ CREATE TABLE habits(
 
 CREATE TABLE habit_logs(
     log_id SERIAL PRIMARY KEY,
-    habit_id IN NOT NULL REFERENCES habits(habit_id) ON DELETE CASCADE,
+    habit_id INT NOT NULL REFERENCES habits(habit_id) ON DELETE CASCADE,
     log_date DATE NOT NULL,
     is_completed BOOLEAN DEFAULT FALSE,
     value NUMERIC(6,2),
@@ -108,7 +108,7 @@ CREATE TABLE training_plans(
 
 CREATE TABLE routines(
     routine_id SERIAL PRIMARY KEY,
-    plan_id IN NOT NULL REFERENCES training_plans(plan_id) ON DELETE CASCADE,
+    plan_id INT NOT NULL REFERENCES training_plans(plan_id) ON DELETE CASCADE,
     name VARCHAR(100)NOT NULL,
     description TEXT,
     category VARCHAR(40)DEFAULT 'strength',
@@ -130,8 +130,8 @@ CREATE TABLE exercises(
 --ROUTINE_EXERCISES
 
 CREATE TABLE routine_exercises(
-    routine_id IN NOT NULL REFERENCES routines(routine_id) ON DELETE CASCADE,
-    exercise_id IN NOT NULL REFERENCES exercises(exercise_id) ON DELETE CASCADE,
+    routine_id INT NOT NULL REFERENCES routines(routine_id) ON DELETE CASCADE,
+    exercise_id INT NOT NULL REFERENCES exercises(exercise_id) ON DELETE CASCADE,
     day_name VARCHAR(20) CHECK(
         day_name IS NULL OR day_name IN(
             'Monday' , 'Tuesday' , 'Wednesday' , 'Thursday',
@@ -140,8 +140,8 @@ CREATE TABLE routine_exercises(
     ),
     sets INT DEFAULT 3,
     reps INT DEFAULT 10,
-    rest_seconds IN DEFAULT 60,
-    sort_order IN DEFAULT 0,
+    rest_seconds INT DEFAULT 60,
+    sort_order INT DEFAULT 0,
     PRIMARY KEY (routine_id , exercise_id)
 );
 
@@ -149,15 +149,27 @@ CREATE TABLE routine_exercises(
 
 CREATE TABLE weekly_schedule(
     schedule_id SERIAL PRIMARY KEY,
-    user_id IN NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     day_name VARCHAR(20) NOT NULL CHECK(
         day_name IN(
             'Monday' , 'Tuesday' , 'Wednesday' , 'Thursday'
             'Friday' , 'Saturday' , 'Sunday'
         )
     ),
-    routine_id IN REFERENCES routines(routine_id) ON DELETE SET NULL,
+    routine_id INT REFERENCES routines(routine_id) ON DELETE SET NULL,
     is_rest_day BOOLEAN DEFAULT FALSE,
     UNIQUE (user_id , day_name)
 );
 
+--WORKOUT SESSIONS
+
+CREATE TABLE workout_sessions(
+    session_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    routine_id INT NOT NULL REFERENCES routines(routine_id) ON DELETE CASCADE,
+    session_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    is_completed BOOLEAN DEFAULT FALSE,
+    started_id TIMESTAMP DEFAULT NOW(),
+    completed_at TIMESTAMP,
+    UNIQUE (user_id, routine_id, session_date)
+);
