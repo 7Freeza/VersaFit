@@ -17,3 +17,12 @@ INSERT INTO users (email, password_hash, full_name)VALUES
     'Demo User'
   };
 
+-- PHYSICAL PROFILES
+
+INSERT INTO physical_profiles(
+  user_id, objective_id, age, height_cm, sex,
+  activity_level, intensity, preferences, onboarding_done
+)VALUES(
+  1,2,28,178.00,'M',
+  'moderate', 'medium', 'gym,running', TRUE
+);
