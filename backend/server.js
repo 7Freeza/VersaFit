@@ -46,3 +46,7 @@ app.use('/api/exercise', exerciseRoutes)
 
 app.use(notFoundHandler)
 app.use(errorHandler)
+
+app.listen(PORT, ()=> {
+    console.log(`Versafit backend listening on http://localhost:${PORT}`)
+})
