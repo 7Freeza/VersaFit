@@ -116,3 +116,16 @@ function setsRepsForIntensity(intensity, category) {
   if (intensity === 'low') return { sets: 3, reps: 12, restSeconds: 60 }
   return { sets: 3, reps: 10, restSeconds: 75 }
 }
+
+function difficultyFromProfile(activityLevel, intensity) {
+  if (activityLevel === 'sedentary' || intensity === 'low') {
+    return 'beginner'
+  }
+  if (activityLevel === 'active' && intensity === 'high') {
+    return 'advanced'
+  }
+  if (activityLevel === 'light') {
+    return 'beginner'
+  }
+  return 'intermediate'
+}
