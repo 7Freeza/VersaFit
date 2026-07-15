@@ -164,8 +164,40 @@ export async function updateSchedule(req, res, next) {
             isRestDay: day.is_rest_day,
         },
     })
-    
+
     } catch (error) {
         next(error)
+    }
+}
+
+export async function startRoutine(req, res, next) {
+    try {
+        const routineId = Number(req.params.routineId)
+        const routine = await exerciseModel.getRoutineById(routineId, req.user.userId)
+        
+        if (!routine) {
+            throw createError(404, 'Routine not found')
+        }
+        
+        const session = await exerciseModel.startSession(req.user.userId, routineId)
+        const checkoffs = await exerciseModel.getSessionCheckoffs(session.session_id)
+        
+        res.status(201).json({
+            message: 'Routine started',
+            session: {
+                sessionId: session.session_id,
+                routineId: session.routine_id,
+                isCompleted: session.is_completed,
+                sessionDate: session.session_date,
+            },
+
+        checkoffs: checkoffs.map((c) => ({
+            exerciseId: c.exercise_id,
+            name: c.name,
+            isDone: c.is_done,
+            })),
+        })
+        } catch (error) {
+            next(error)
     }
 }
