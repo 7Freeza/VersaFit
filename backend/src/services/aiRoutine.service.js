@@ -232,3 +232,41 @@ function buildRoutineShells(objectiveName, preferences) {
 
   return shells.slice(0, 6)
 }
+
+function weeklyAssignmentFromActivity(activityLevel, routineCount) {
+  // Values are routine indexes or 'rest'
+  if (activityLevel === 'sedentary' || activityLevel === 'light') {
+    return [
+      0,
+      'rest',
+      1,
+      'rest',
+      Math.min(2, routineCount - 1),
+      'rest',
+      'rest',
+    ]
+  }
+
+  if (activityLevel === 'active') {
+    return [
+      0,
+      1,
+      'rest',
+      Math.min(2, routineCount - 1),
+      0,
+      Math.min(3, routineCount - 1),
+      'rest',
+    ]
+  }
+
+  // moderate
+  return [
+    0,
+    1,
+    'rest',
+    Math.min(2, routineCount - 1),
+    Math.min(3, routineCount - 1),
+    'rest',
+    'rest',
+  ]
+}
