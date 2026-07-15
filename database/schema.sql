@@ -145,3 +145,19 @@ CREATE TABLE routine_exercises(
     PRIMARY KEY (routine_id , exercise_id)
 );
 
+--WEEKLY SCHEDULE
+
+CREATE TABLE weekly_schedule(
+    schedule_id SERIAL PRIMARY KEY,
+    user_id IN NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    day_name VARCHAR(20) NOT NULL CHECK(
+        day_name IN(
+            'Monday' , 'Tuesday' , 'Wednesday' , 'Thursday'
+            'Friday' , 'Saturday' , 'Sunday'
+        )
+    ),
+    routine_id IN REFERENCES routines(routine_id) ON DELETE SET NULL,
+    is_rest_day BOOLEAN DEFAULT FALSE,
+    UNIQUE (user_id , day_name)
+);
+
