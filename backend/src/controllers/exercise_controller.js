@@ -130,3 +130,42 @@ export async function getRoutineDetail(req, res, next) {
     next(error)
     }
 }
+
+export async function updateSchedule(req, res, next) {
+    try {
+        const errors = validateScheduleDay(req.body)
+        if (errors.length) {
+            throw createError(400, 'Validation failed', errors)
+    }
+
+    const isRestDay = Boolean(req.body.isRestDay)
+    const routineId = isRestDay ? null : Number(req.body.routineId)
+
+    if (!isRestDay) {
+        const routine = await exerciseModel.getRoutineById(routineId, req.user.userId)
+        if (!routine) {
+            throw createError(404, 'Routine not found for this user')
+        }
+    }
+
+    const day = await exerciseModel.upsertScheduleDay(
+        req.user.userId,
+        req.body.dayName,
+        routineId,
+        isRestDay
+    )
+
+    res.json({
+        message: 'Schedule updated',
+        day: {
+            scheduleId: day.schedule_id,
+            dayName: day.day_name,
+            routineId: day.routine_id,
+            isRestDay: day.is_rest_day,
+        },
+    })
+    
+    } catch (error) {
+        next(error)
+    }
+}
