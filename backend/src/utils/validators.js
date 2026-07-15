@@ -2,7 +2,7 @@
  * Simple Validators for request bodies.
  */
 
-const EMIAL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function validateRegister(body){
     const errors = []
@@ -89,5 +89,28 @@ export function validateWeight(body){
     if(Number.isNaN(weight)|| weight <= 0 || weight >= 500){
         errors.push('Weight must be a positive number under 500 kg')
     }
+    return errors
+}
+
+export function validateScheduleDay(body) {
+    const errors = []
+    const validDays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+    ]
+
+    if (!body.dayName || !validDays.includes(body.dayName)) {
+    errors.push('dayName must be a valid weekday name in English')
+    }
+
+    if (body.isRestDay === false && body.routineId == null) {
+    errors.push('routineId is required when the day is not a rest day')
+    }
+
     return errors
 }
