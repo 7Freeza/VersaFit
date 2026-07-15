@@ -126,3 +126,22 @@ CREATE TABLE exercises(
     description TEXT,
     external_id VARCHAR(50)
 );
+
+--ROUTINE_EXERCISES
+
+CREATE TABLE routine_exercises(
+    routine_id IN NOT NULL REFERENCES routines(routine_id) ON DELETE CASCADE,
+    exercise_id IN NOT NULL REFERENCES exercises(exercise_id) ON DELETE CASCADE,
+    day_name VARCHAR(20) CHECK(
+        day_name IS NULL OR day_name IN(
+            'Monday' , 'Tuesday' , 'Wednesday' , 'Thursday',
+            'Friday' , 'Saturday' , 'Sunday'
+        )
+    ),
+    sets INT DEFAULT 3,
+    reps INT DEFAULT 10,
+    rest_seconds IN DEFAULT 60,
+    sort_order IN DEFAULT 0,
+    PRIMARY KEY (routine_id , exercise_id)
+);
+
