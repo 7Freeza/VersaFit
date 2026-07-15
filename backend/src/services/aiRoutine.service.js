@@ -129,3 +129,27 @@ function difficultyFromProfile(activityLevel, intensity) {
   }
   return 'intermediate'
 }
+
+function durationAndCalories(category, intensity, age) {
+  let duration = 35
+  let kcal = 280
+
+  if (category === 'hiit') {
+    duration = intensity === 'high' ? 25 : 20
+    kcal = intensity === 'high' ? 320 : 260
+  } else if (category === 'cardio') {
+    duration = intensity === 'high' ? 40 : 30
+    kcal = intensity === 'high' ? 380 : 300
+  } else {
+    duration = intensity === 'high' ? 50 : intensity === 'low' ? 35 : 45
+    kcal = intensity === 'high' ? 420 : intensity === 'low' ? 280 : 360
+  }
+
+  // Slight reduction for older users
+  if (age && age >= 50) {
+    duration = Math.max(20, duration - 5)
+    kcal = Math.max(100, kcal - 40)
+  }
+
+  return { durationMin: duration, estimatedKcal: kcal }
+}
