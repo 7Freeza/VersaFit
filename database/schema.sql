@@ -173,3 +173,13 @@ CREATE TABLE workout_sessions(
     completed_at TIMESTAMP,
     UNIQUE (user_id, routine_id, session_date)
 );
+
+--EXERCISE CHECKOFFS
+
+CREATE TABLE exercise_checkoffs(
+    session_id INT NOT NULL REFERENCES workout_sessions(session_id) ON DELETE CASCADE,
+    exercise_id INT NOT NULL REFERENCES exercises(exercise_id) ON DELETE CASCADE,
+    is_done BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (session_id , exercise_id)
+);
+            
