@@ -1,25 +1,26 @@
 import * as exerciseModel from '../models/exercise.model.js'
 import * as userModel from '../models/user.model.js'
-import { generatePersonalizedPlan } from '../utils/planGenerator.js'
-import { validateScheduleDay} from '../middleware/errorHandler.js'
+import { generatePersonalizedPlan } from '../services/aiRoutine.service.js'
+import { validateScheduleDay } from '../utils/validators.js'
+import { createError } from '../middleware/errorHandler.js'
 
-function mapRoutine (row) {
-  return {
-    routineId: row.routine_id,
-    planId: row.plan_id,
-    name: row.name,
-    description: row.description,
-    category: row.category,
-    difficulty: row.difficulty,
-    durationMin: row.duration_min,
-    estimateKcal: row.estimate_kcal,
-  }
+function mapRoutine(row) {
+    return {
+        routineId: row.routine_id,
+        planId: row.plan_id,
+        name: row.name,
+        description: row.description,
+        category: row.category,
+        difficulty: row.difficulty,
+        durationMin: row.duration_min,
+        estimatedKcal: row.estimated_kcal,
+    }
 }
 
-export async function getDashboard(req, res) {
+export async function getDashboard(req, res, next) {
     try {
         let plan = await exerciseModel.getActivePlanForUser(req.user.userId)
-
+        
         if (!plan) {
             const profile = await userModel.getUserWithProfile(req.user.userId)
             if (profile && profile.onboarding_done) {
@@ -28,7 +29,7 @@ export async function getDashboard(req, res) {
                 plan = await exerciseModel.getActivePlanForUser(req.user.userId)
             }
         }
-        
+
         if (!plan) {
             return res.json({
                 hasPlan: false,
@@ -40,10 +41,10 @@ export async function getDashboard(req, res) {
                 today: null,
             })
         }
-        
+
         const category = req.query.category || 'all'
         let routines = await exerciseModel.getRoutinesByPlan(plan.plan_id, category)
-        
+
         routines = routines.filter((r) => r.category !== 'flexibility')
 
         await exerciseModel.ensureDefaultSchedule(req.user.userId)
@@ -72,8 +73,7 @@ export async function getDashboard(req, res) {
             today: weekStatus.today,
         })
     } catch (error) {
-        console.error('Error in getDashboard:', error.message)
-        return res.status(500).json({ message: 'Internal server error' })
+        next(error)
     }
 }
 
@@ -119,15 +119,15 @@ export async function getRoutineDetail(req, res, next) {
                     isCompleted: session.is_completed,
                     sessionDate: session.session_date,
                 }
-            : null,
-        checkoffs: checkoffs.map((c) => ({
-            exerciseId: c.exercise_id,
-            name: c.name,
-            isDone: c.is_done,
+                : null,
+            checkoffs: checkoffs.map((c) => ({
+                exerciseId: c.exercise_id,
+                name: c.name,
+                isDone: c.is_done,
             })),
         })
     } catch (error) {
-    next(error)
+        next(error)
     }
 }
 
@@ -136,35 +136,30 @@ export async function updateSchedule(req, res, next) {
         const errors = validateScheduleDay(req.body)
         if (errors.length) {
             throw createError(400, 'Validation failed', errors)
-    }
-
-    const isRestDay = Boolean(req.body.isRestDay)
-    const routineId = isRestDay ? null : Number(req.body.routineId)
-
-    if (!isRestDay) {
-        const routine = await exerciseModel.getRoutineById(routineId, req.user.userId)
-        if (!routine) {
-            throw createError(404, 'Routine not found for this user')
         }
-    }
-
-    const day = await exerciseModel.upsertScheduleDay(
-        req.user.userId,
-        req.body.dayName,
-        routineId,
-        isRestDay
-    )
-
-    res.json({
-        message: 'Schedule updated',
-        day: {
-            scheduleId: day.schedule_id,
-            dayName: day.day_name,
-            routineId: day.routine_id,
-            isRestDay: day.is_rest_day,
-        },
-    })
-
+        const isRestDay = Boolean(req.body.isRestDay)
+        const routineId = isRestDay ? null : Number(req.body.routineId)
+        if (!isRestDay) {
+            const routine = await exerciseModel.getRoutineById(routineId, req.user.userId)
+            if (!routine) {
+                throw createError(404, 'Routine not found for this user')
+            }
+        }
+        const day = await exerciseModel.upsertScheduleDay(
+            req.user.userId,
+            req.body.dayName,
+            routineId,
+            isRestDay
+        )
+        res.json({
+            message: 'Schedule updated',
+            day: {
+                scheduleId: day.schedule_id,
+                dayName: day.day_name,
+                routineId: day.routine_id,
+                isRestDay: day.is_rest_day,
+            },
+        })
     } catch (error) {
         next(error)
     }
@@ -174,14 +169,14 @@ export async function startRoutine(req, res, next) {
     try {
         const routineId = Number(req.params.routineId)
         const routine = await exerciseModel.getRoutineById(routineId, req.user.userId)
-        
+
         if (!routine) {
             throw createError(404, 'Routine not found')
         }
-        
+
         const session = await exerciseModel.startSession(req.user.userId, routineId)
         const checkoffs = await exerciseModel.getSessionCheckoffs(session.session_id)
-        
+
         res.status(201).json({
             message: 'Routine started',
             session: {
@@ -190,14 +185,47 @@ export async function startRoutine(req, res, next) {
                 isCompleted: session.is_completed,
                 sessionDate: session.session_date,
             },
-
-        checkoffs: checkoffs.map((c) => ({
-            exerciseId: c.exercise_id,
-            name: c.name,
-            isDone: c.is_done,
+            checkoffs: checkoffs.map((c) => ({
+                exerciseId: c.exercise_id,
+                name: c.name,
+                isDone: c.is_done,
             })),
         })
-        } catch (error) {
-            next(error)
+    } catch (error) {
+        next(error)
+    }
+}
+export async function toggleExercise(req, res, next) {
+    try {
+        const sessionId = Number(req.params.sessionId)
+        const exerciseId = Number(req.params.exerciseId)
+        const isDone = Boolean(req.body.isDone)
+        
+        const ownership = await exerciseModel.getSessionCheckoffs(sessionId)
+        if (!ownership.length) {
+        
+        }
+        const updated = await exerciseModel.toggleCheckoff(sessionId, exerciseId, isDone)
+        if (!updated) {
+            throw createError(404, 'Checkoff not found for this session')
+        }
+        
+        const all = await exerciseModel.getSessionCheckoffs(sessionId)
+        const allDone = all.length > 0 && all.every((item) => item.is_done)
+        let session = null
+        if (allDone) {
+            session = await exerciseModel.completeSession(sessionId, req.user.userId)
+        }
+        res.json({
+            message: 'Exercise updated',
+            checkoff: {
+                sessionId: updated.session_id,
+                exerciseId: updated.exercise_id,
+                isDone: updated.is_done,
+            },
+            sessionCompleted: Boolean(session),
+        })
+    } catch (error) {
+        next(error)
     }
 }
