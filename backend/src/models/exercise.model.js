@@ -350,3 +350,156 @@ export async function completeSession(sessionId, userId) {
   )
   return result.rows[0] || null
 }
+
+/**
+ * Create a full training plan with routines and exercises for a user.
+ * Used by the AI generator service.
+ */
+export async function saveGeneratedPlan(userId, planPayload) {
+  const client = await getClient()
+
+  try {
+    await client.query('BEGIN')
+
+    await client.query(
+      `UPDATE training_plans tp
+       SET is_active = FALSE
+       FROM habits h
+       WHERE tp.habit_id = h.habit_id
+         AND h.user_id = $1
+         AND h.habit_type = 'exercise'`,
+      [userId]
+    )
+
+    const habitResult = await client.query(
+      `INSERT INTO habits (user_id, habit_type, name, target_frequency)
+       VALUES ($1, 'exercise', $2, $3)
+       RETURNING habit_id`,
+      [userId, 'Personalized training', planPayload.targetFrequency || 4]
+    )
+    const habitId = habitResult.rows[0].habit_id
+
+    const planResult = await client.query(
+      `INSERT INTO training_plans (habit_id, objective_id, duration_weeks, is_active)
+       VALUES ($1, $2, $3, TRUE)
+       RETURNING plan_id`,
+      [habitId, planPayload.objectiveId || null, planPayload.durationWeeks || 4]
+    )
+    const planId = planResult.rows[0].plan_id
+
+    const createdRoutines = []
+
+    for (const routine of planPayload.routines) {
+      const routineResult = await client.query(
+        `INSERT INTO routines (
+           plan_id, name, description, category, difficulty, duration_min, estimated_kcal
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING routine_id, name, description, category, difficulty, duration_min, estimated_kcal`,
+        [
+          planId,
+          routine.name,
+          routine.description,
+          routine.category,
+          routine.difficulty,
+          routine.durationMin,
+          routine.estimatedKcal,
+        ]
+      )
+
+      const routineRow = routineResult.rows[0]
+      let order = 1
+
+      for (const exercise of routine.exercises) {
+        let exerciseId
+
+        const existing = await client.query(
+          `SELECT exercise_id FROM exercises WHERE LOWER(name) = LOWER($1) LIMIT 1`,
+          [exercise.name]
+        )
+
+        if (existing.rows[0]) {
+          exerciseId = existing.rows[0].exercise_id
+        } else {
+          const inserted = await client.query(
+            `INSERT INTO exercises (name, muscle_group, description, external_id)
+             VALUES ($1, $2, $3, $4)
+             RETURNING exercise_id`,
+            [
+              exercise.name,
+              exercise.muscleGroup || null,
+              exercise.description || null,
+              exercise.externalId || null,
+            ]
+          )
+          exerciseId = inserted.rows[0].exercise_id
+        }
+
+        await client.query(
+          `INSERT INTO routine_exercises (
+             routine_id, exercise_id, sets, reps, rest_seconds, sort_order
+           ) VALUES ($1, $2, $3, $4, $5, $6)
+           ON CONFLICT (routine_id, exercise_id) DO UPDATE SET
+             sets = EXCLUDED.sets,
+             reps = EXCLUDED.reps,
+             rest_seconds = EXCLUDED.rest_seconds,
+             sort_order = EXCLUDED.sort_order`,
+          [
+            routineRow.routine_id,
+            exerciseId,
+            exercise.sets,
+            exercise.reps,
+            exercise.restSeconds,
+            order,
+          ]
+        )
+        order += 1
+      }
+
+      createdRoutines.push(routineRow)
+    }
+
+    const days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ]
+
+    const suggested = planPayload.weeklyAssignment || []
+
+    for (let i = 0; i < days.length; i += 1) {
+      const assignment = suggested[i]
+      const isRest = !assignment || assignment === 'rest'
+      const routineIndex =
+        assignment && assignment !== 'rest' ? Number(assignment) : null
+      const routineId =
+        routineIndex != null && createdRoutines[routineIndex]
+          ? createdRoutines[routineIndex].routine_id
+          : null
+
+      await client.query(
+        `INSERT INTO weekly_schedule (user_id, day_name, routine_id, is_rest_day)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (user_id, day_name)
+         DO UPDATE SET routine_id = EXCLUDED.routine_id, is_rest_day = EXCLUDED.is_rest_day`,
+        [userId, days[i], routineId, isRest]
+      )
+    }
+
+    await client.query('COMMIT')
+
+    return {
+      planId,
+      habitId,
+      routines: createdRoutines,
+    }
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
