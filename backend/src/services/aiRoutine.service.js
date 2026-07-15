@@ -153,3 +153,82 @@ function durationAndCalories(category, intensity, age) {
 
   return { durationMin: duration, estimatedKcal: kcal }
 }
+
+function buildRoutineShells(objectiveName, preferences) {
+  const pref = (preferences || '').toLowerCase()
+  const goal = (objectiveName || '').toLowerCase()
+
+  const shells = []
+
+  if (goal.includes('muscle') || goal.includes('force') || pref.includes('gym')) {
+    shells.push(
+      {
+        name: 'Full Upper Body',
+        description: 'Chest, back, shoulders and arms in one solid session.',
+        category: 'strength',
+        pool: 'strength',
+      },
+      {
+        name: 'Legs and Glutes',
+        description: 'Squats, hinges and lunges for strong lower body.',
+        category: 'strength',
+        pool: 'strength',
+      }
+    )
+  }
+
+  if (goal.includes('weight') || goal.includes('cardio') || pref.includes('run')) {
+    shells.push({
+      name: 'Interval Cardio',
+      description: 'Burn fat and improve cardiovascular endurance.',
+      category: 'cardio',
+      pool: 'cardio',
+    })
+  }
+
+  if (pref.includes('hiit') || goal.includes('cardio') || goal.includes('active')) {
+    shells.push({
+      name: 'HIIT Full Body',
+      description: 'High intensity work for maximum results in less time.',
+      category: 'hiit',
+      pool: 'hiit',
+    })
+  }
+
+  // Always ensure at least a few varied routines (no flexibility category)
+  const defaults = [
+    {
+      name: 'Full Body Strength',
+      description: 'Balanced strength session for the whole body.',
+      category: 'strength',
+      pool: 'strength',
+    },
+    {
+      name: 'Steady Cardio',
+      description: 'Moderate cardio to build endurance.',
+      category: 'cardio',
+      pool: 'cardio',
+    },
+    {
+      name: 'Express HIIT',
+      description: 'Short and intense metabolic conditioning.',
+      category: 'hiit',
+      pool: 'hiit',
+    },
+    {
+      name: 'Core and Stability',
+      description: 'Core strength to support the rest of your training.',
+      category: 'strength',
+      pool: 'strength',
+    },
+  ]
+
+  for (const item of defaults) {
+    if (shells.length >= 6) break
+    if (!shells.find((s) => s.category === item.category && s.name === item.name)) {
+      shells.push(item)
+    }
+  }
+
+  return shells.slice(0, 6)
+}
