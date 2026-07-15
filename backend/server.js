@@ -43,3 +43,6 @@ app.get('/api/health', async (_req, res) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/exercise', exerciseRoutes)
+
+app.use(notFoundHandler)
+app.use(errorHandler)
