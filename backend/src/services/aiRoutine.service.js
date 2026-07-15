@@ -270,3 +270,71 @@ function weeklyAssignmentFromActivity(activityLevel, routineCount) {
     'rest',
   ]
 }
+
+/**
+ * Generate a full plan payload for the current user profile.
+ */
+export async function generatePersonalizedPlan(profile) {
+  const intensity = profile.intensity || 'medium'
+  const activityLevel = profile.activity_level || 'moderate'
+  const age = profile.age || 30
+  const objectiveName = profile.objective_name || 'Stay active'
+  const preferences = profile.preferences || ''
+  const difficulty = difficultyFromProfile(activityLevel, intensity)
+
+  const external = await fetchWgerExercises(15)
+  const shells = buildRoutineShells(objectiveName, preferences)
+
+  const routines = shells.map((shell) => {
+    const localPool = FALLBACK_LIBRARY[shell.pool] || FALLBACK_LIBRARY.strength
+    const mixed = [...localPool]
+
+    // Blend a couple of external exercises when available
+    for (const item of external.slice(0, 4)) {
+      if (!mixed.find((m) => m.name.toLowerCase() === item.name.toLowerCase())) {
+        mixed.push(item)
+      }
+    }
+
+    const count = 4
+    const chosen = pickExercises(mixed, count)
+    const load = setsRepsForIntensity(intensity, shell.category)
+    const metrics = durationAndCalories(shell.category, intensity, age)
+
+    return {
+      name: shell.name,
+      description: shell.description,
+      category: shell.category,
+      difficulty,
+      durationMin: metrics.durationMin,
+      estimatedKcal: metrics.estimatedKcal,
+      exercises: chosen.map((ex) => ({
+        name: ex.name,
+        muscleGroup: ex.muscleGroup || ex.muscle_group || 'General',
+        description: ex.description || '',
+        externalId: ex.externalId || null,
+        sets: load.sets,
+        reps: load.reps,
+        restSeconds: load.restSeconds,
+      })),
+    }
+  })
+
+  const targetFrequency =
+    activityLevel === 'sedentary'
+      ? 2
+      : activityLevel === 'light'
+        ? 3
+        : activityLevel === 'active'
+          ? 5
+          : 4
+
+  return {
+    objectiveId: profile.objective_id || null,
+    durationWeeks: 4,
+    targetFrequency,
+    weeklyAssignment: weeklyAssignmentFromActivity(activityLevel, routines.length),
+    routines,
+    source: external.length > 0 ? 'versafit-ai + wger' : 'versafit-ai',
+  }
+}
