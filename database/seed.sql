@@ -26,3 +26,10 @@ INSERT INTO physical_profiles(
   1,2,28,178.00,'M',
   'moderate', 'medium', 'gym,running', TRUE
 );
+
+--WEIGHT LOGS
+
+INSERT INTO weight_logs (profile_id, weight_kg, recorded_at)VALUES
+  (1, 75.00, NOW() - INTERVAL '14 days'),
+  (1, 74.50, NOW() - INTERVAL '7 days'),
+  (1, 74.00, NOW());
