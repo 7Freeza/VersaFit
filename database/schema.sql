@@ -104,4 +104,15 @@ CREATE TABLE training_plans(
     created_at TIMESTAMP DEFAULT NOW()
 );
 
---
+--ROUTINES
+
+CREATE TABLE routines(
+    routine_id SERIAL PRIMARY KEY,
+    plan_id IN NOT NULL REFERENCES training_plans(plan_id) ON DELETE CASCADE,
+    name VARCHAR(100)NOT NULL,
+    description TEXT,
+    category VARCHAR(40)DEFAULT 'strength',
+    difficulty VARCHAR(30)DEFAULT 'beginner',
+    duration_min INT DEFAULT 30,
+    estimated_kcal INT DEFAULT 200
+)
