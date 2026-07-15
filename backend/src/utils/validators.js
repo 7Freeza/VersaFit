@@ -81,3 +81,13 @@ export function validateProfile(body){
     }
     return errors
 }
+
+export function validateWeight(body){
+    const errors = []
+    const weight = Number(body.weightKg)
+
+    if(Number.isNaN(weight)|| weight <= 0 || weight >= 500){
+        errors.push('Weight must be a positive number under 500 kg')
+    }
+    return errors
+}
