@@ -1,4 +1,4 @@
---inquiries
+--queries
 
 --List users with their physical profile and latest weight
 
@@ -21,3 +21,13 @@ FROM users u
 LEFT JOIN physical_profiles p ON p.user_id = u.user_id
 LEFT JOIN objectives o ON o.objective_id = p.objective_id
 WHERE u.is_active = TRUE;
+
+--Weight history for a user
+
+SELECT
+    w.weight_kg,
+    w.recorded_at
+FROM weight_logs w
+JOIN physical_profiles p ON p.profile_id = w.profile_id
+WHERE p.user_id = 1
+ORDER BY w.recorded_at DESC; 
