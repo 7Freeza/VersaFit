@@ -209,4 +209,42 @@ export async function renderDashboard(root, { navigate }) {
         </main>
       </div>
     `
-  }}
+    /* Conecta los botones despues de pintar el html — commit: feat: dashboard de ejercicio */
+    bindThemeToggle(root)
+    bindLogout(navigate)
+
+    root.querySelector('[data-go="home"]')?.addEventListener('click', () => navigate('/'))
+
+    root.querySelectorAll('[data-filter]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        category = btn.getAttribute('data-filter')
+        dashboard = await api.exerciseDashboard(category)
+        await paint()
+      })
+    })
+
+    root.querySelectorAll('[data-open-routine]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        navigate(`/routine/${btn.getAttribute('data-open-routine')}`)
+      })
+    })
+/* Abre el editor para asignar rutina a un dia — commit: feat: dashboard de ejercicio */
+    root.querySelectorAll('[data-day]').forEach((btn) => {
+      btn.addEventListener('click', () => openScheduleEditor(btn.getAttribute('data-day')))
+    })
+
+    root.querySelectorAll('[data-action="generate"]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        btn.disabled = true
+        try {
+          await api.regeneratePlan()
+          showToast('Nuevo plan generado', 'success')
+          dashboard = await api.exerciseDashboard(category)
+          await paint()
+        } catch (error) {
+          showToast(error.message || 'No se pudo generar el plan', 'error')
+        } finally {
+          btn.disabled = false
+        }
+      })
+    })}}
