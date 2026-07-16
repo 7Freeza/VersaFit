@@ -134,3 +134,14 @@ export function categoryLabelEs(category) {
   }
   return map[category] || category || 'Descanso'
 }
+/* Etiqueta de estado de la rutina */
+export function statusLabelEs(status) {
+  const map = {
+    complete: 'Completo',
+    incomplete: 'Incompleto',
+    pending: 'Pendiente',
+    upcoming: 'Proximo',
+    rest: 'Descanso',
+  }
+  return map[status] || status
+}
