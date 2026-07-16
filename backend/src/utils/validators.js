@@ -6,9 +6,9 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function validateRegister(body){
     const errors = []
-    const {fullname, email, password} = body
+    const { fullName, email, password } = body
 
-    if(!fullname ||String(fullname).trim().length < 2){
+    if (!fullName || String(fullName).trim().length < 2) {
         errors.push('Full name must have at least 2 characters')
     }
     if(!email || !EMAIL_REGEX.test(String(email).trim())){
