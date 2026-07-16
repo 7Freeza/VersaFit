@@ -1,4 +1,4 @@
-/* Guarda la sesion y consulta el usuario actual — commit: feat: guarda la sesion y consulta el usuario actual */
+/* Guarda la sesion y consulta el usuario actual */
 import {
   getToken,
   setToken,
@@ -40,11 +40,4 @@ export async function refreshSession() {
   }
 }
 
-/* Protege rutas que requieren sesion activa — commit: feat: proteccion de rutas privadas */
-export function requireLogin(navigate) {
-  if (!isLoggedIn()) {
-    navigate('/login')
-    return false
-  }
-  return true
-}
+
