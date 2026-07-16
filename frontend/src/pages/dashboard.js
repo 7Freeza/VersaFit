@@ -31,4 +31,30 @@ export async function renderDashboard(root, { navigate }) {
   let dashboard = null
   let motivation = null
   let sessionInfo = null
-}
+/* Carga los datos del dashboard y la frase motivacional */
+  try {
+    sessionInfo = await refreshSession()
+    ;[dashboard, motivation] = await Promise.all([
+      api.exerciseDashboard(category),
+      api.motivation().catch(() => ({
+        quote: 'Disciplina hoy, fuerza siempre.',
+        author: 'VersaFit',
+      })),
+    ])
+  } catch (error) {
+    root.querySelector('.max-w-6xl').innerHTML = `
+      <p class="text-[var(--vf-danger)]">${escapeHtml(error.message)}</p>
+      <button class="vf-btn-primary mt-4" data-go-onboarding>Completar perfil</button>
+    `
+    root.querySelector('[data-go-onboarding]')?.addEventListener('click', () => {
+      navigate('/onboarding')
+    })
+    bindThemeToggle(root)
+    bindLogout(navigate)
+    return
+  }
+
+  if (sessionInfo?.user && !sessionInfo.user.onboardingDone) {
+    navigate('/onboarding')
+    return
+  }
