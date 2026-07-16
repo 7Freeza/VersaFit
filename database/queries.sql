@@ -66,3 +66,24 @@ JOIN routine_exercises re ON re.routine_id = r.routine_id
 JOIN exercises e ON e.exercise_id = re.exercise_id
 WHERE r.routine_id = 1
 ORDER BY re.sort_order;
+
+--Weekly schedule for a user
+
+SELECT
+    ws.day_name,
+    ws.is_rest_day,
+    r.name AS routine_name,
+    r.category
+FROM weekly_schedule ws
+LEFT JOIN routines r ON r.routine_id = ws.routine_id
+WHERE ws.user_id = 1
+ORDER BY
+    CASE ws.day_name
+        WHEN 'Monday' THEN 1
+        WHEN 'Tuesday' THEN 2
+        WHEN 'Wednesday' THEN 3
+        WHEN 'Thursday' THEN 4
+        WHEN 'Friday' THEN 5
+        WHEN 'Saturday' THEN 6
+        WHEN 'Sunday' THEN 7
+    END;
