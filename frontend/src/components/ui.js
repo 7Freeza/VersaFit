@@ -111,3 +111,26 @@ export function categoryIcon(category) {
   }
   return map[category] || '🏋️'
 }
+
+/* Traduce dias y categorias al español*/
+export function dayLabelEs(dayName) {
+  const map = {
+    Monday: 'Lun',
+    Tuesday: 'Mar',
+    Wednesday: 'Mie',
+    Thursday: 'Jue',
+    Friday: 'Vie',
+    Saturday: 'Sab',
+    Sunday: 'Dom',
+  }
+  return map[dayName] || dayName
+}
+
+export function categoryLabelEs(category) {
+  const map = {
+    strength: 'Fuerza',
+    cardio: 'Cardio',
+    hiit: 'HIIT',
+  }
+  return map[category] || category || 'Descanso'
+}
