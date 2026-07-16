@@ -87,3 +87,17 @@ ORDER BY
         WHEN 'Saturday' THEN 6
         WHEN 'Sunday' THEN 7
     END;
+
+--Completed sessions this week
+
+SELECT
+    ws.session_date,
+    r.name AS routine_name,
+    ws.is_completed
+FROM workout_sessions ws
+JOIN routines r ON r.routine_id = ws.routine_id
+WHERE ws.user_id = 1
+  AND ws.session_date >= date_trunc('week', CURRENT_DATE)::date
+ORDER BY ws.session_date;
+
+
