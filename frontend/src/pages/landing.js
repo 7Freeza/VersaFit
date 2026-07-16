@@ -80,4 +80,21 @@ export function renderLanding(root, { navigate }) {
       </main>
     </div>
   `
+/* Conecta los botones despues de pintar el html*/
+  bindThemeToggle(root)
+  bindLogout(navigate)
+
+  root.querySelector('[data-go="start"]')?.addEventListener('click', () => {
+    if (logged) navigate('/dashboard')
+    else navigate('/register')
+  })
+
+  root.querySelector('[data-go="exercise"]')?.addEventListener('click', () => {
+    if (logged) navigate('/dashboard')
+    else navigate('/login')
+  })
+
+  root.querySelector('[data-go="all-modules"]')?.addEventListener('click', () => {
+    navigate('/coming-soon')
+  })
 }
