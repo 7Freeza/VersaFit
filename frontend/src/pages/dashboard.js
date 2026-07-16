@@ -277,3 +277,79 @@ export async function renderDashboard(root, { navigate }) {
       }
     })
   }
+/* Muestra el modal con el historial de peso */
+  async function openWeightHistory() {
+    const modalRoot = document.getElementById('modal-root')
+    modalRoot.classList.remove('hidden')
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop">
+        <div class="vf-card p-6 w-full max-w-md">
+          <p class="text-[var(--vf-muted)] text-sm">Cargando historial...</p>
+        </div>
+      </div>
+    `
+
+    try {
+      const data = await api.weightHistory()
+      const history = data.history || []
+      const user = getCurrentUser()
+      const latest = user?.latestWeight
+
+      modalRoot.innerHTML = `
+        <div class="modal-backdrop">
+          <div class="vf-card p-6 w-full max-w-md">
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <h3 class="text-xl font-bold">Historial de peso</h3>
+                <p class="text-sm text-[var(--vf-muted)] mt-1">
+                  Peso actual:
+                  <span class="text-[var(--vf-accent)] font-bold">
+                    ${latest != null ? `${latest} kg` : 'Sin registro'}
+                  </span>
+                </p>
+              </div>
+              <button type="button" class="vf-btn-ghost text-sm py-1 px-3" data-close>Cerrar</button>
+            </div>
+
+            <div class="weight-history-list mb-5">
+              ${
+                history.length
+                  ? history
+                      .map(
+                        (h) => `
+                    <div class="weight-history-row">
+                      <span>${new Date(h.recordedAt).toLocaleDateString('es-CO', {
+                        timeZone: 'America/Bogota',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}</span>
+                      <strong>${h.weightKg} kg</strong>
+                    </div>
+                  `
+                      )
+                      .join('')
+                  : `<p class="text-sm text-[var(--vf-muted)]">Aun no hay registros de peso.</p>`
+              }
+            </div>
+
+            <form id="history-weight-form">
+              <label class="vf-label" for="newWeightKg">Nuevo peso corporal (kg)</label>
+              <div class="flex gap-2">
+                <input
+                  id="newWeightKg"
+                  name="newWeightKg"
+                  type="number"
+                  step="0.1"
+                  min="1"
+                  class="vf-input flex-1"
+                  placeholder="Ej: 72.5"
+                />
+                <button type="submit" class="vf-btn-primary whitespace-nowrap">Actualizar</button>
+              </div>
+              <p class="vf-error hidden" data-error="history-weight"></p>
+            </form>
+          </div>
+        </div>
+      `
+        }}}
