@@ -387,3 +387,33 @@ export async function renderDashboard(root, { navigate }) {
       closeModal()
     }
   }
+/* Abre el modal para editar el plan de un dia */
+  function openScheduleEditor(dayName) {
+    const modalRoot = document.getElementById('modal-root')
+    const routines = (dashboard.routines || []).filter((r) => r.category !== 'flexibility')
+    const current = (dashboard.schedule || []).find((d) => d.dayName === dayName)
+
+    modalRoot.classList.remove('hidden')
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop">
+        <div class="vf-card p-6 w-full max-w-md">
+          <h3 class="text-xl font-bold mb-2">Plan para ${dayLabelEs(dayName)}</h3>
+          <p class="text-sm text-[var(--vf-muted)] mb-4">Elige una rutina o marca descanso.</p>
+
+          <button type="button" class="vf-option ${current?.isRestDay ? 'selected' : ''}" data-pick="rest">
+            Descanso
+          </button>
+          ${routines
+            .map(
+              (r) => `
+            <button type="button" class="vf-option ${Number(current?.routineId) === Number(r.routineId) ? 'selected' : ''}" data-pick="${r.routineId}">
+              ${escapeHtml(r.name)} · ${categoryLabelEs(r.category)}
+            </button>
+          `
+            )
+            .join('')}
+
+          <button type="button" class="vf-btn-ghost w-full mt-3" data-close>Cerrar</button>
+        </div>
+      </div>
+    `
