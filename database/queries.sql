@@ -30,4 +30,23 @@ SELECT
 FROM weight_logs w
 JOIN physical_profiles p ON p.profile_id = w.profile_id
 WHERE p.user_id = 1
-ORDER BY w.recorded_at DESC; 
+ORDER BY w.recorded_at DESC;
+
+--Active training plan with its routines
+
+SELECT
+    tp.plan_id,
+    tp.duration_weeks,
+    r.routine_id,
+    r.name AS routine_name,
+    r.category,
+    r.difficulty,
+    r.duration_min,
+    r.estimated_kcal
+FROM training_plans tp
+JOIN routines r ON r.plan_id = tp.plan_id
+WHERE tp.is_active = TRUE
+  AND tp.habit_id IN (
+      SELECT habit_id FROM habits WHERE user_id = 1 AND habit_type = 'exercise'
+  )
+ORDER BY r.routine_id;
