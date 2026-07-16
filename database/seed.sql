@@ -71,3 +71,26 @@ INSERT INTO routine (plan_id, name, description, category, duration_min, estimat
   (1, 'Recovery Yoga', 'Reduce muscle tension and improve joint mobility.', 'all levels', 35, 120),
   (1, 'Legs and Glutes', 'Squats, deadlifts and lunges for strong legs.', 'intermediate', 50, 420),
   (1, 'Indoor Cycling', 'Pédal with music and burn calories with low impact', 'beginner', 40, 350)
+
+--ROUTINE EXERCISES
+
+INSERT INTO routine_exercises (routine_id, exercise_id, sets, reps, rest_seconds, sort_order)VALUES
+  (1, 1, 4, 10, 90, 1),
+  (1, 2, 3, 8, 90, 2),
+  (1, 3, 3, 12, 60, 3),
+  (1, 4, 3, 15, 45, 4),
+  (2, 12, 1, 20, 60, 1),
+  (2, 9, 3, 30, 30, 2),
+  (2, 11, 3, 20, 30, 3),
+  (3, 10, 4, 12, 30, 1),
+  (3, 11, 4, 20, 30, 2),
+  (3, 9, 3, 40, 20, 3),
+  (3, 8, 3, 45, 30, 4),
+  (4, 14, 1, 20, 0, 1),
+  (4, 15, 2, 30, 15, 2),
+  (4, 8, 2, 40, 20, 3),
+  (5, 5, 4, 10, 90, 1),
+  (5, 6, 3, 8, 120, 2),
+  (5, 7, 3, 12, 60, 3),
+  (6, 13, 1, 30, 0, 1),
+  (6, 9, 2, 30, 30, 2);
