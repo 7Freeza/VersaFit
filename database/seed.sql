@@ -39,3 +39,8 @@ INSERT INTO weight_logs (profile_id, weight_kg, recorded_at)VALUES
 INSERT INTO habits (user_id, habit_type, name, target_frequency)VALUES
   (1, 'exercise' , 'weekly training', 4);
 
+--TRAINING PLANS
+
+INSERT INTO training_plans (habit_id, objective_id, duration_weeks, is_active)VALUES
+  (1, 2, 4, TRUE)
+
