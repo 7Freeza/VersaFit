@@ -63,3 +63,11 @@ INSERT INTO exercises (name, muscle_group, description)VALUES
   ('Yoga Flow', 'Flexibility', 'Gentle mobility flow'),
   ('Hip Stretch', 'Flexibility', 'Hip opener stretch');
   
+--ROUTINE
+INSERT INTO routine (plan_id, name, description, category, duration_min, estimated_kcal)VALUES
+  (1, 'Full Upper Body', 'Chest, back, shoulders and arms in one powerful session.', 'strength', 450, 380),
+  (1, 'Interval Run', 'Burn fat improve cardiovascualar endurace.', 'beginner', 30, 310)
+  (1, 'HIIT Full Body', 'Hight intensity, maximum results in minimum time.', 'advacend', 20, 290),
+  (1, 'Recovery Yoga', 'Reduce muscle tension and improve joint mobility.', 'all levels', 35, 120),
+  (1, 'Legs and Glutes', 'Squats, deadlifts and lunges for strong legs.', 'intermediate', 50, 420),
+  (1, 'Indoor Cycling', 'Pédal with music and burn calories with low impact', 'beginner', 40, 350)
