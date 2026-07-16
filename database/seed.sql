@@ -94,3 +94,15 @@ INSERT INTO routine_exercises (routine_id, exercise_id, sets, reps, rest_seconds
   (5, 7, 3, 12, 60, 3),
   (6, 13, 1, 30, 0, 1),
   (6, 9, 2, 30, 30, 2);
+
+--WEEKLY SCHEDULE
+
+INSERT INTO weekly_schedule (user_id, day_name, routine_id, is_rest_day)VALUES
+  (1, 'Monday', 1, FALSE),
+  (1, 'Tuesday' 2, FALSE),
+  (1, 'Wednesday' NULL, TRUE),
+  (1, 'Thursday' 3, FALSE),
+  (1, 'Friday' 5, FALSE),
+  (1, 'Saturday' 4, FALSE),
+  (1, 'Sunday' NULL, TRUE);
+  
