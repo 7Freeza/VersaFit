@@ -44,3 +44,22 @@ INSERT INTO habits (user_id, habit_type, name, target_frequency)VALUES
 INSERT INTO training_plans (habit_id, objective_id, duration_weeks, is_active)VALUES
   (1, 2, 4, TRUE)
 
+--EXERCISE
+
+INSERT INTO exercises (name, muscle_group, description)VALUES
+  ('Bench Press', 'Chest', 'Brabell press on a flat bench'),
+  ('Pull-ups', 'Back', 'Bodyweight pull-ups'),
+  ('Military Press', 'Shoulders', 'Overhead barbell press'),
+  ('Bicep Curl', 'Arms', 'Dumbbell bicep curls'),
+  ('Squats', 'Legs', 'Barbell or bodyweight squats'),
+  ('Deadlift', 'Legs', 'Conventional deadlift'),
+  ('Luges', 'Legs', 'Walking or stationary lunges'),
+  ('Plank', 'Core', 'Isometric core hold'),
+  ('Jumping Jacks', 'Cardio', 'Full body warm-up cardio'),
+  ('Burpees', 'Full body', 'Hight intensity full body movement'),
+  ('Mountain Climbers', 'Cardio', 'Core and cardio drill'),
+  ('Running Intervals', 'Cardio', 'Alternating spring and jog'),
+  ('Cycling', 'Cardio', 'Indoor or outdoor cycling'),
+  ('Yoga Flow', 'Flexibility', 'Gentle mobility flow'),
+  ('Hip Stretch', 'Flexibility', 'Hip opener stretch');
+  
