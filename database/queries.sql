@@ -110,6 +110,14 @@ JOIN exercises e ON e.exercise_id = ec.exercise_id
 WHERE ec.session_id = 1
 ORDER BY e.name;
 
+--Count of routines by category for a user
 
-
+SELECT
+    r.category,
+    COUNT(*) AS total
+FROM routines r
+JOIN training_planes tp ON tp.plan_id = r.plan_id
+JOIN habits h ON h.habit_id = tp.habit_id
+WHERE h.user_id = 1
+GROUP BY r.category;
 
