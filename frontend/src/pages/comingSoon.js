@@ -1,4 +1,4 @@
-/* Pagina para los modulos que aun no estan listos — commit: feat: pagina de proximamente */
+/* Pagina para los modulos que aun no estan listos */
 import { topNav, bindThemeToggle, bindLogout } from '../components/ui.js'
 
 export function renderComingSoon(root, { navigate }) {
@@ -23,7 +23,7 @@ export function renderComingSoon(root, { navigate }) {
       </main>
     </div>
   `
-/* Conecta los botones despues de pintar el html — commit: feat: pagina de proximamente */
+  /* Conecta los botones despues de pintar el html */
   bindThemeToggle(root)
   bindLogout(navigate)
 
