@@ -33,3 +33,9 @@ INSERT INTO weight_logs (profile_id, weight_kg, recorded_at)VALUES
   (1, 75.00, NOW() - INTERVAL '14 days'),
   (1, 74.50, NOW() - INTERVAL '7 days'),
   (1, 74.00, NOW());
+
+--HABITS
+
+INSERT INTO habits (user_id, habit_type, name, target_frequency)VALUES
+  (1, 'exercise' , 'weekly training', 4);
+
