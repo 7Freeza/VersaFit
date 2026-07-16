@@ -50,3 +50,19 @@ WHERE tp.is_active = TRUE
       SELECT habit_id FROM habits WHERE user_id = 1 AND habit_type = 'exercise'
   )
 ORDER BY r.routine_id;
+
+--Exercises of a routine with sets and reps
+
+SELECT 
+    r.name AS routine_name,
+    e.name AS exercise_name,
+    e.muscle_group,
+    re.sets,
+    re.reps,
+    re.rest_secods,
+    re.sort_order
+FROM routines r
+JOIN routine_exercises re ON re.routine_id = r.routine_id
+JOIN exercises e ON e.exercise_id = re.exercise_id
+WHERE r.routine_id = 1
+ORDER BY re.sort_order;
