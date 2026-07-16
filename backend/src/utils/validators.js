@@ -38,7 +38,7 @@ export function validateLogin(body){
 
 export function validateProfile(body){
     const errors = []
-    const {age, heightCm, weightKg, sex} = body
+    const { age, heightCm, weightKg, sex, activityLevel, intensity, objectiveId } = body
     
     if(age !== undefined && age !== null){
         const ageNum = Number(age)
