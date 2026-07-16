@@ -417,3 +417,36 @@ export async function renderDashboard(root, { navigate }) {
         </div>
       </div>
     `
+    /* Conecta los eventos del modal de edicion — commit: feat: dashboard de ejercicio */
+    modalRoot.querySelector('[data-close]')?.addEventListener('click', closeModal)
+    modalRoot.querySelector('.modal-backdrop')?.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal-backdrop')) closeModal()
+    })
+
+    modalRoot.querySelectorAll('[data-pick]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const pick = btn.getAttribute('data-pick')
+        try {
+          await api.updateSchedule({
+            dayName,
+            isRestDay: pick === 'rest',
+            routineId: pick === 'rest' ? null : Number(pick),
+          })
+          showToast('Plan semanal actualizado', 'success')
+          closeModal()
+          dashboard = await api.exerciseDashboard(category)
+          await paint()
+        } catch (error) {
+          showToast(error.message, 'error')
+        }
+      })
+    })
+  }
+/* Cierra cualquier modal abierto — commit: feat: dashboard de ejercicio */
+  function closeModal() {
+    const modalRoot = document.getElementById('modal-root')
+    modalRoot.classList.add('hidden')
+    modalRoot.innerHTML = ''
+  }
+  await paint()
+}
