@@ -100,4 +100,16 @@ WHERE ws.user_id = 1
   AND ws.session_date >= date_trunc('week', CURRENT_DATE)::date
 ORDER BY ws.session_date;
 
+--Checklist progress for a session
+
+SELECT
+    e.name AS exercise_name
+    ec.is_done
+FROM exercise_checkoffs ec
+JOIN exercises e ON e.exercise_id = ec.exercise_id
+WHERE ec.session_id = 1
+ORDER BY e.name;
+
+
+
 
