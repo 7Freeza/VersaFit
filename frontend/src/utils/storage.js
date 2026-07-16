@@ -32,3 +32,15 @@ export function clearStoredUser() {
     localStorage.removeItem(USER_KEY)
 }
 
+export function getTheme() {
+    return localStorage.getItem(THEME_KEY)  || 'dark'
+}
+
+export function setTheme(theme) {
+    localStorage.setItem(THEME_KEY, theme)
+}
+
+export function clearSession() {
+    clearToken()
+    clearStoredUser()
+}
