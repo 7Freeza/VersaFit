@@ -228,7 +228,7 @@ export async function renderDashboard(root, { navigate }) {
         navigate(`/routine/${btn.getAttribute('data-open-routine')}`)
       })
     })
-/* Abre el editor para asignar rutina a un dia — commit: feat: dashboard de ejercicio */
+/* Abre el editor para asignar rutina a un dia*/
     root.querySelectorAll('[data-day]').forEach((btn) => {
       btn.addEventListener('click', () => openScheduleEditor(btn.getAttribute('data-day')))
     })
@@ -247,4 +247,33 @@ export async function renderDashboard(root, { navigate }) {
           btn.disabled = false
         }
       })
-    })}}
+    })
+    /* Abre el historial de peso */
+    root.querySelector('[data-action="history"]')?.addEventListener('click', () => {
+      openWeightHistory()
+    })
+
+    const weightForm = root.querySelector('#weight-form')
+    weightForm?.addEventListener('submit', async (event) => {
+      event.preventDefault()
+      const value = weightForm.weightKg.value
+      const errorMsg = validateWeight(value)
+      const errorEl = root.querySelector('[data-error="weight"]')
+
+      if (errorMsg) {
+        errorEl.textContent = errorMsg
+        errorEl.classList.remove('hidden')
+        return
+      }
+
+      try {
+        await api.addWeight(Number(value))
+        showToast('Peso guardado', 'success')
+        sessionInfo = await refreshSession()
+        await paint()
+      } catch (error) {
+        errorEl.textContent = error.message
+        errorEl.classList.remove('hidden')
+      }
+    })
+  }
