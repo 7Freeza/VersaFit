@@ -352,4 +352,38 @@ export async function renderDashboard(root, { navigate }) {
           </div>
         </div>
       `
-        }}}
+    /* Conecta los eventos del modal de historial */
+      modalRoot.querySelector('[data-close]')?.addEventListener('click', closeModal)
+      modalRoot.querySelector('.modal-backdrop')?.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal-backdrop')) closeModal()
+      })
+
+      modalRoot.querySelector('#history-weight-form')?.addEventListener('submit', async (event) => {
+        event.preventDefault()
+        const form = event.currentTarget
+        const value = form.newWeightKg.value
+        const errorEl = modalRoot.querySelector('[data-error="history-weight"]')
+        const errorMsg = validateWeight(value)
+
+        if (errorMsg) {
+          errorEl.textContent = errorMsg
+          errorEl.classList.remove('hidden')
+          return
+        }
+
+        try {
+          await api.addWeight(Number(value))
+          showToast('Peso actualizado', 'success')
+          sessionInfo = await refreshSession()
+          closeModal()
+          await paint()
+        } catch (error) {
+          errorEl.textContent = error.message
+          errorEl.classList.remove('hidden')
+        }
+      })
+    } catch (error) {
+      showToast(error.message, 'error')
+      closeModal()
+    }
+  }
