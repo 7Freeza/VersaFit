@@ -37,7 +37,41 @@ export function bindThemeToggle(root = document) {
     })
   })
 }
+/* Barra de navegacion superior — commit: feat: barra de navegacion superior */
+export function topNav({ active = 'home', showAuth = true, logoSize = 44 } = {}) {
+  const logged = isLoggedIn()
+  const user = getCurrentUser()
 
+  return `
+    <header class="flex items-center justify-between gap-4 px-4 md:px-8 py-4 border-b border-[var(--vf-border)]">
+      <a href="#/" class="flex items-center no-underline text-[var(--vf-text)]">
+        ${logoMarkup(logoSize)}
+      </a>
+
+      <nav class="hidden md:flex items-center gap-6 text-sm text-[var(--vf-muted)]">
+        <a href="#/" class="${active === 'home' ? 'text-[var(--vf-text)] font-semibold' : ''}">Inicio</a>
+        <a href="#/dashboard" class="${active === 'exercise' ? 'text-[var(--vf-text)] font-semibold' : ''}">Rutinas</a>
+        <span class="opacity-50 cursor-not-allowed">Nutricion</span>
+        <span class="opacity-50 cursor-not-allowed">Progreso</span>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        ${themeToggleButton()}
+        ${
+          showAuth
+            ? logged
+              ? `
+                <span class="hidden sm:inline text-sm text-[var(--vf-muted)]">Hola, ${escapeHtml(user?.fullName || '')}</span>
+                <button type="button" data-action="logout" class="vf-btn-ghost text-sm py-2">Salir</button>
+                <a href="#/dashboard" class="vf-btn-primary text-sm py-2">Dashboard</a>
+              `
+              : `<a href="#/login" class="vf-btn-primary text-sm py-2">Iniciar sesion</a>`
+            : ''
+        }
+      </div>
+    </header>
+  `
+}
 /* Etiqueta de dificultad e icono de categoria*/
 export function difficultyChip(difficulty) {
   const labelMap = {
