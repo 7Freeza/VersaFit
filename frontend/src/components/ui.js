@@ -72,6 +72,24 @@ export function topNav({ active = 'home', showAuth = true, logoSize = 44 } = {})
     </header>
   `
 }
+/* Cierra sesion y escapa texto para html */
+export function bindLogout(navigate) {
+  document.querySelectorAll('[data-action="logout"]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      logout()
+      navigate('/')
+    })
+  })
+}
+
+export function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+}
 /* Etiqueta de dificultad e icono de categoria*/
 export function difficultyChip(difficulty) {
   const labelMap = {
