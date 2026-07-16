@@ -37,3 +37,25 @@ export function bindThemeToggle(root = document) {
     })
   })
 }
+
+/* Etiqueta de dificultad e icono de categoria*/
+export function difficultyChip(difficulty) {
+  const labelMap = {
+    beginner: 'Principiante',
+    intermediate: 'Intermedio',
+    advanced: 'Avanzado',
+    'all levels': 'Todos los niveles',
+  }
+  const label = labelMap[difficulty] || difficulty || 'General'
+  const advanced = difficulty === 'advanced' ? 'advanced' : ''
+  return `<span class="vf-chip ${advanced}">${escapeHtml(label)}</span>`
+}
+
+export function categoryIcon(category) {
+  const map = {
+    strength: '💪',
+    cardio: '🏃',
+    hiit: '⚡',
+  }
+  return map[category] || '🏋️'
+}
