@@ -47,4 +47,69 @@ export async function renderOnboarding(root, { navigate }) {
     objectiveId: user?.objectiveId || null,
     intensity: user?.intensity || '',
     preferences: user?.preferences ? String(user.preferences).split(',').filter(Boolean) : [],
-  }}
+  }
+  /* Carga los objetivos disponibles desde el backend */
+  try {
+    const data = await api.objectives()
+    objectives = data.objectives || []
+  } catch {
+    objectives = [
+      { objectiveId: 1, name: 'Lose weight' },
+      { objectiveId: 2, name: 'Build muscle' },
+      { objectiveId: 3, name: 'Improve cardio' },
+      { objectiveId: 4, name: 'Stay active' },
+    ]
+  }
+
+  const objectiveLabels = {
+    'Lose weight': 'Perder peso / Grasa corporal',
+    'Build muscle': 'Ganar masa muscular / Fuerza',
+    'Improve cardio': 'Mejorar salud y resistencia (Cardio)',
+    'Stay active': 'Mantenerme activo / Desestresarme',
+  }
+/* Traduce los objetivos a etiquetas en español */
+  function paint() {
+    const progress = (step / 4) * 100
+    const titles = ['DATOS BASICOS', 'TU NIVEL ACTUAL', 'TUS OBJETIVOS', 'PREFERENCIAS']
+
+    root.innerHTML = `
+      <div class="vf-page min-h-screen">
+        <div class="px-4 md:px-8 py-4 flex items-center justify-between border-b border-[var(--vf-border)]">
+          <div class="flex items-center">
+            ${logoMarkup(44)}
+          </div>
+          <div class="flex items-center gap-3">
+            ${themeToggleButton()}
+            <span class="text-sm text-[var(--vf-muted)]">Paso ${step} de 4</span>
+          </div>
+        </div>
+
+        <div class="max-w-xl mx-auto px-4 py-8">
+          <div class="flex justify-between text-[10px] md:text-xs font-bold tracking-wide text-[var(--vf-muted)] mb-2">
+            ${titles
+              .map(
+                (t, i) =>
+                  `<span class="${i + 1 <= step ? 'text-[var(--vf-accent)]' : ''}">${t}</span>`
+              )
+              .join('')}
+          </div>
+          <div class="vf-progress-bar mb-8"><span style="width:${progress}%"></span></div>
+
+          <div class="vf-card p-6 md:p-8">
+            ${renderStep()}
+            <p class="vf-error hidden mt-3" data-error="form"></p>
+            <div class="mt-6 flex gap-3">
+              ${
+                step > 1
+                  ? `<button type="button" data-action="back" class="vf-btn-ghost">← Atras</button>`
+                  : ''
+              }
+              <button type="button" data-action="next" class="vf-btn-primary flex-1">
+                ${step === 4 ? '¡Empezar a entrenar! →' : 'Continuar →'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `
+}}
