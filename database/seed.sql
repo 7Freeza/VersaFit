@@ -8,12 +8,13 @@ INSERT INTO objectives (name , description) VALUES
   ('Improve cardio','Improve health and cardiovascular endurance'),
   ('Stay active','Stay active and reduce stress');
 
---USER DEMO PASSWORD (BCRYPT HASH)
+--USER DEMO (password: password)
+-- Hash generated with bcryptjs cost 10
 
 INSERT INTO users (email, password_hash, full_name) VALUES
   (
     'demo@versafit.com',
-    '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+    '$2b$10$KO0CQYMK/TSUpxz8x9oF0O9euBf9dy0Q5jCmydG1Is1YOOOOvxydy',
     'Demo User'
   );
 
