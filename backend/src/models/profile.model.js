@@ -99,3 +99,62 @@ export async function upsertProfile(userId, data) {
     client.release()
   }
 }
+
+export async function addWeightLog(userId, weightKg) {
+  const profile = await query(
+    `SELECT profile_id FROM physical_profiles WHERE user_id = $1`,
+    [userId]
+  )
+
+  if (!profile.rows[0]) {
+    const error = new Error('Physical profile not found. Complete onboarding first.')
+    error.status = 400
+    throw error
+  }
+
+  const result = await query(
+    `INSERT INTO weight_logs (profile_id, weight_kg)
+     VALUES ($1, $2)
+     RETURNING log_id, weight_kg, recorded_at`,
+    [profile.rows[0].profile_id, weightKg]
+  )
+
+  return result.rows[0]
+}
+
+export async function getWeightHistory(userId, limit = 12) {
+  const result = await query(
+    `SELECT w.log_id, w.weight_kg, w.recorded_at
+     FROM weight_logs w
+     JOIN physical_profiles p ON p.profile_id = w.profile_id
+     WHERE p.user_id = $1
+     ORDER BY w.recorded_at DESC
+     LIMIT $2`,
+    [userId, limit]
+  )
+  return result.rows
+}
+
+/**
+ * Returns true if the user should be prompted for weekly weight.
+ * Rule: no weight log in the last 7 days.
+ */
+export async function needsWeeklyWeight(userId) {
+  const result = await query(
+    `SELECT w.recorded_at
+     FROM weight_logs w
+     JOIN physical_profiles p ON p.profile_id = w.profile_id
+     WHERE p.user_id = $1
+     ORDER BY w.recorded_at DESC
+     LIMIT 1`,
+    [userId]
+  )
+
+  if (!result.rows[0]) {
+    return true
+  }
+
+  const last = new Date(result.rows[0].recorded_at)
+  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000
+  return Date.now() - last.getTime() > sevenDaysMs
+}
