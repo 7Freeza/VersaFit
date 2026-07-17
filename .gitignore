@@ -12,6 +12,7 @@ build/
 
 # Vite
 .vite/
+<<<<<<< HEAD
 
 # Logs
 logs/
@@ -31,3 +32,6 @@ Thumbs.db
 
 # Test / coverage
 coverage/
+=======
+frontend/package.json.bak
+>>>>>>> deb6caed8de6ae686a0f56e3f885a41daba7be64
