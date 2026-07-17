@@ -21,9 +21,9 @@ DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE users(
     user_id SERIAL PRIMARY KEY,
-    email VARCHAR(255)UNIQUE NOT NULL,
-    password_hash VARCHAR(255)NOT NULL,
-    full_name VARCHAR(100)NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW()
 );
@@ -32,7 +32,7 @@ CREATE TABLE users(
 
 CREATE TABLE objectives(
     objective_id SERIAL PRIMARY KEY,
-    name VARCHAR(100)NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
     description TEXT
 );
 
@@ -72,7 +72,7 @@ CREATE TABLE habits(
     habit_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     habit_type VARCHAR(30) NOT NULL CHECK(
-        habit_type IN('exercise', 'sleep', 'nutrition', 'other')
+        habit_type IN('exercise', 'reading', 'sleep', 'nutrition', 'other')
     ),
     name VARCHAR(100) NOT NULL,
     target_frequency INT,
@@ -97,7 +97,7 @@ CREATE TABLE habit_logs(
 
 CREATE TABLE training_plans(
     plan_id SERIAL PRIMARY KEY,
-    habit_id INT NOT NULL REFERENCES habits(habit id) ON DELETE CASCADE,
+    habit_id INT NOT NULL REFERENCES habits(habit_id) ON DELETE CASCADE,
     objective_id INT REFERENCES objectives(objective_id),
     duration_weeks INT DEFAULT 4,
     is_active BOOLEAN DEFAULT TRUE,
@@ -109,10 +109,10 @@ CREATE TABLE training_plans(
 CREATE TABLE routines(
     routine_id SERIAL PRIMARY KEY,
     plan_id INT NOT NULL REFERENCES training_plans(plan_id) ON DELETE CASCADE,
-    name VARCHAR(100)NOT NULL,
+    name VARCHAR(100) NOT NULL,
     description TEXT,
-    category VARCHAR(40)DEFAULT 'strength',
-    difficulty VARCHAR(30)DEFAULT 'beginner',
+    category VARCHAR(40) DEFAULT 'strength',
+    difficulty VARCHAR(30) DEFAULT 'beginner',
     duration_min INT DEFAULT 30,
     estimated_kcal INT DEFAULT 200
 );
@@ -152,7 +152,7 @@ CREATE TABLE weekly_schedule(
     user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     day_name VARCHAR(20) NOT NULL CHECK(
         day_name IN(
-            'Monday' , 'Tuesday' , 'Wednesday' , 'Thursday'
+            'Monday' , 'Tuesday' , 'Wednesday' , 'Thursday' ,
             'Friday' , 'Saturday' , 'Sunday'
         )
     ),
@@ -169,7 +169,7 @@ CREATE TABLE workout_sessions(
     routine_id INT NOT NULL REFERENCES routines(routine_id) ON DELETE CASCADE,
     session_date DATE NOT NULL DEFAULT CURRENT_DATE,
     is_completed BOOLEAN DEFAULT FALSE,
-    started_id TIMESTAMP DEFAULT NOW(),
+    started_at TIMESTAMP DEFAULT NOW(),
     completed_at TIMESTAMP,
     UNIQUE (user_id, routine_id, session_date)
 );
@@ -186,7 +186,7 @@ CREATE TABLE exercise_checkoffs(
 -- HELPFUL INDEXES FOR COMMON QUERIES
 
 CREATE INDEX idx_weight_logs_profile ON weight_logs(profile_id);
-CREATE INDEX idx_habits_user ON habits(habit_id);
+CREATE INDEX idx_habits_user ON habits(user_id);
 CREATE INDEX idx_routines_plan ON routines(plan_id);
 CREATE INDEX idx_sessions_user_date ON workout_sessions(user_id , session_date);
 CREATE INDEX idx_weekly_schedule ON weekly_schedule(user_id);
