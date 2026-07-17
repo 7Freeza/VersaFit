@@ -49,4 +49,82 @@ export async function renderRoutine(root, { navigate, params }) {
     const checkoffs = detail.checkoffs || []
     const checkMap = Object.fromEntries(checkoffs.map((c) => [c.exerciseId, c.isDone]))
     const canCheck = Boolean(session)
-  }}
+    /* Pinta la rutina completa con sus ejercicios */
+    root.innerHTML = `
+      <div class="vf-page min-h-screen">
+        ${topNav({ active: 'exercise', logoSize: 48 })}
+
+        <main class="max-w-2xl mx-auto px-4 py-8">
+          <button type="button" data-back class="vf-btn-ghost mb-6">← Volver</button>
+
+          <section class="vf-card p-6 md:p-8 mb-8">
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="w-14 h-14 rounded-full bg-[var(--vf-accent)]/15 flex items-center justify-center text-3xl">
+                ${categoryIcon(r.category)}
+              </div>
+              ${difficultyChip(r.difficulty)}
+            </div>
+
+            <h1 class="text-3xl font-black">${escapeHtml(r.name)}</h1>
+            <p class="text-[var(--vf-muted)] mt-2">${escapeHtml(r.description || '')}</p>
+
+            <div class="flex flex-wrap gap-5 mt-5 text-sm text-[var(--vf-muted)]">
+              <div>
+                <div class="font-bold text-[var(--vf-text)]">⏱ ${r.durationMin} min</div>
+                <div>Duracion</div>
+              </div>
+              <div>
+                <div class="font-bold text-[var(--vf-text)]">🔥 ${r.estimatedKcal} kcal</div>
+                <div>Calorias</div>
+              </div>
+              <div>
+                <div class="font-bold text-[var(--vf-text)]">⚡ ${exercises.length} ejerc.</div>
+                <div>Ejercicios</div>
+              </div>
+            </div>
+
+            <button type="button" class="vf-btn-primary mt-6" data-action="start" ${session?.isCompleted ? 'disabled' : ''}>
+              ${
+                session?.isCompleted
+                  ? 'Rutina completada hoy'
+                  : session
+                    ? 'Sesion en curso'
+                    : '▶ Iniciar rutina'
+              }
+            </button>
+          </section>
+          <section>
+            <h2 class="font-bold text-xl mb-3">Ejercicios</h2>
+            ${exercises
+              .map((ex) => {
+                const done = Boolean(checkMap[ex.exerciseId])
+                return `
+                  <label class="check-row ${done ? 'done' : ''}">
+                    <input
+                      type="checkbox"
+                      data-exercise="${ex.exerciseId}"
+                      ${done ? 'checked' : ''}
+                      ${canCheck && !session?.isCompleted ? '' : 'disabled'}
+                    />
+                    <div>
+                      <div class="font-semibold">${escapeHtml(ex.name)} ${ex.sets}×${ex.reps}</div>
+                      <div class="text-xs text-[var(--vf-muted)]">
+                        ${escapeHtml(ex.muscleGroup || '')}
+                        ${ex.restSeconds ? ` · descanso ${ex.restSeconds}s` : ''}
+                      </div>
+                    </div>
+                  </label>
+                `
+              })
+              .join('')}
+
+            ${
+              !canCheck
+                ? `<p class="text-sm text-[var(--vf-muted)] mt-2">Pulsa "Iniciar rutina" para poder marcar los ejercicios completados.</p>`
+                : ''
+            }
+          </section>
+        </main>
+      </div>
+    `
+}}
