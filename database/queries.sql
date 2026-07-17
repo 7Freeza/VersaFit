@@ -13,7 +13,7 @@ SELECT
         (
             SELECT w.weight_kg
             FROM weight_logs w
-            WHERE W.profile_id = p.profile_id
+            WHERE w.profile_id = p.profile_id
             ORDER BY w.recorded_at DESC
             LIMIT 1
         ) AS latest_weight
@@ -59,7 +59,7 @@ SELECT
     e.muscle_group,
     re.sets,
     re.reps,
-    re.rest_secods,
+    re.rest_seconds,
     re.sort_order
 FROM routines r
 JOIN routine_exercises re ON re.routine_id = r.routine_id
@@ -103,7 +103,7 @@ ORDER BY ws.session_date;
 --Checklist progress for a session
 
 SELECT
-    e.name AS exercise_name
+    e.name AS exercise_name,
     ec.is_done
 FROM exercise_checkoffs ec
 JOIN exercises e ON e.exercise_id = ec.exercise_id
@@ -116,8 +116,7 @@ SELECT
     r.category,
     COUNT(*) AS total
 FROM routines r
-JOIN training_planes tp ON tp.plan_id = r.plan_id
+JOIN training_plans tp ON tp.plan_id = r.plan_id
 JOIN habits h ON h.habit_id = tp.habit_id
 WHERE h.user_id = 1
 GROUP BY r.category;
-
