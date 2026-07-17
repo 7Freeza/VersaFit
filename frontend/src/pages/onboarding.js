@@ -266,7 +266,7 @@ export async function renderOnboarding(root, { navigate }) {
       formError.classList.add('hidden')
 
       if (step < 4) {
-        step += 1s
+        step += 1
         paint()
         return
       }
