@@ -112,4 +112,69 @@ export async function renderOnboarding(root, { navigate }) {
         </div>
       </div>
     `
-}}
+    /* Conecta los botones despues de pintar el paso actual */
+    bindThemeToggle(root)
+    wireStepEvents()
+  }
+
+  function renderStep() {
+    if (step === 1) {
+      return `
+        <div class="text-3xl mb-3">👤</div>
+        <h2 class="text-2xl font-bold">Datos Basicos</h2>
+        <p class="text-[var(--vf-muted)] text-sm mb-5">Cuentanos un poco sobre ti para personalizar tu experiencia.</p>
+
+        <label class="vf-label">Nombre</label>
+        <input id="fullName" class="vf-input mb-3" value="${escapeHtml(state.fullName)}" placeholder="¿Como te llamas?" />
+
+        <label class="vf-label">Edad</label>
+        <input id="age" type="number" min="12" max="100" class="vf-input mb-3" value="${escapeHtml(state.age)}" placeholder="Anos" />
+
+        <label class="vf-label">Altura (cm)</label>
+        <input id="heightCm" type="number" min="100" max="250" class="vf-input mb-3" value="${escapeHtml(state.heightCm)}" placeholder="Ej: 175" />
+
+        <label class="vf-label">Peso actual (kg)</label>
+        <input id="weightKg" type="number" min="1" max="499" step="0.1" class="vf-input mb-3" value="${escapeHtml(state.weightKg)}" placeholder="Ej: 70" />
+
+        <label class="vf-label">Sexo</label>
+        <select id="sex" class="vf-input">
+          <option value="M" ${state.sex === 'M' ? 'selected' : ''}>Masculino</option>
+          <option value="F" ${state.sex === 'F' ? 'selected' : ''}>Femenino</option>
+          <option value="Other" ${state.sex === 'Other' ? 'selected' : ''}>Otro</option>
+        </select>
+      `
+    }
+/* Paso 2: nivel de actividad */
+    if (step === 2) {
+      return `
+        <div class="text-3xl mb-3">📊</div>
+        <h2 class="text-2xl font-bold">Tu Nivel Actual</h2>
+        <p class="text-[var(--vf-muted)] text-sm mb-5">¿Con que frecuencia haces ejercicio a la semana?</p>
+        ${ACTIVITY_OPTIONS.map(
+          (opt) => `
+            <button type="button" class="vf-option ${state.activityLevel === opt.value ? 'selected' : ''}" data-activity="${opt.value}">
+              ${opt.label}
+            </button>
+          `
+        ).join('')}
+      `
+    }
+/* Paso 3: objetivo principal */
+    if (step === 3) {
+      return `
+        <div class="text-3xl mb-3">🎯</div>
+        <h2 class="text-2xl font-bold">Tus Objetivos</h2>
+        <p class="text-[var(--vf-muted)] text-sm mb-5">¿Cual es tu principal objetivo?</p>
+        ${objectives
+          .map((obj) => {
+            const label = objectiveLabels[obj.name] || obj.name
+            const selected = Number(state.objectiveId) === Number(obj.objectiveId)
+            return `
+              <button type="button" class="vf-option ${selected ? 'selected' : ''}" data-objective="${obj.objectiveId}">
+                ${escapeHtml(label)}
+              </button>
+            `
+          })
+          .join('')}
+      `
+    }}}
