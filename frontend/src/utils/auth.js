@@ -39,5 +39,12 @@ export async function refreshSession() {
     return null
   }
 }
-
+/* Protege rutas que requieren sesion activa */
+export function requireLogin(navigate) {
+  if (!isLoggedIn()) {
+    navigate('/login')
+    return false
+  }
+  return true
+}
 
