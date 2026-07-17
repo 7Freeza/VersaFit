@@ -76,5 +76,37 @@ export function renderRegister(root, { navigate }) {
       fullName: form.fullName.value,
       email: form.email.value,
       password: form.password.value,
+    }
+/* Valida y envia los datos al backend */
+    const errors = validateRegisterForm(payload)
+    ;['fullName', 'email', 'password', 'form'].forEach((key) => {
+      const el = root.querySelector(`[data-error="${key}"]`)
+      if (!el) return
+      if (errors[key]) {
+        el.textContent = errors[key]
+        el.classList.remove('hidden')
+      } else {
+        el.textContent = ''
+        el.classList.add('hidden')
+      }
     })
+
+    if (Object.keys(errors).length) return
+
+    const button = form.querySelector('button[type="submit"]')
+    button.disabled = true
+
+    try {
+      const data = await api.register(payload)
+      saveSession(data.token, data.user)
+      showToast('Cuenta creada', 'success')
+      navigate('/onboarding')
+    } catch (error) {
+      const formError = root.querySelector('[data-error="form"]')
+      formError.textContent = error.message || 'No se pudo crear la cuenta'
+      formError.classList.remove('hidden')
+    } finally {
+      button.disabled = false
+    }
+  })
 }
