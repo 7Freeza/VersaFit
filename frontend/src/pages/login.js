@@ -74,3 +74,44 @@ export function renderLogin(root, { navigate }) {
       email: form.email.value,
       password: form.password.value,
     }
+/* Valida y envia las credenciales al backend */
+    const errors = validateLoginForm(payload)
+    showFieldErrors(root, errors)
+    if (Object.keys(errors).length) return
+
+    const button = form.querySelector('button[type="submit"]')
+    button.disabled = true
+
+    try {
+      const data = await api.login(payload)
+      saveSession(data.token, data.user)
+      showToast('Sesion iniciada', 'success')
+
+      if (!data.user.onboardingDone) {
+        navigate('/onboarding')
+      } else {
+        navigate('/dashboard')
+      }
+    } catch (error) {
+      const formError = root.querySelector('[data-error="form"]')
+      formError.textContent = error.message || 'No se pudo iniciar sesion'
+      formError.classList.remove('hidden')
+    } finally {
+      button.disabled = false
+    }
+  })
+}
+/* Muestra los errores de validacion en el formulario — commit: feat: muestra errores de validacion del login */
+function showFieldErrors(root, errors) {
+  ;['email', 'password', 'form'].forEach((key) => {
+    const el = root.querySelector(`[data-error="${key}"]`)
+    if (!el) return
+    if (errors[key]) {
+      el.textContent = errors[key]
+      el.classList.remove('hidden')
+    } else {
+      el.textContent = ''
+      el.classList.add('hidden')
+    }
+  })
+}
