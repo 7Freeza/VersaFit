@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+/* Theme tokens */
+:root {
+  --vf-bg: #0b1220;
+  --vf-card: #111827;
+  --vf-border: #1f2a44;
+  --vf-text: #f8fafc;
+  --vf-muted: #94a3b8;
+  --vf-accent: #84cc16;
+  --vf-accent-hover: #a3e635;
+  --vf-input: #0f172a;
+  --vf-danger: #f87171;
+}
+
+html.light {
+  --vf-bg: #f1f5f9;
+  --vf-card: #ffffff;
+  --vf-border: #dbe3ef;
+  --vf-text: #0f172a;
+  --vf-muted: #64748b;
+  --vf-accent: #65a30d;
+  --vf-accent-hover: #84cc16;
+  --vf-input: #f8fafc;
+  --vf-danger: #dc2626;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background-color: var(--vf-bg);
+  color: var(--vf-text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-image: url('/assets/FondoVersaFitOscuro.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+html.light body {
+  background-image: url('/assets/FondoVersaFitClaro.jpg');
+}
+
+#app {
+  min-height: 100vh;
+}
+
+/* Shared UI helpers */
+.vf-page {
+  min-height: 100vh;
+  background: rgba(11, 18, 32, 0.72);
+}
+
+html.light .vf-page {
+  background: rgba(241, 245, 249, 0.82);
+}
+
+.vf-card {
+  background: color-mix(in srgb, var(--vf-card) 92%, transparent);
+  border: 1px solid var(--vf-border);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+}
+
+.vf-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--vf-border);
+  background: var(--vf-input);
+  color: var(--vf-text);
+  padding: 0.75rem 1rem;
+  outline: none;
+}
+
+.vf-input:focus {
+  border-color: var(--vf-accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--vf-accent) 35%, transparent);
+}
+
+.vf-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vf-muted);
+  font-weight: 600;
+}
+
+.vf-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 9999px;
+  background: var(--vf-accent);
+  color: #052e16;
+  font-weight: 700;
+  padding: 0.75rem 1.4rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.vf-btn-primary:hover {
+  background: var(--vf-accent-hover);
+}
+
+.vf-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.vf-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 9999px;
+  border: 1px solid var(--vf-border);
+  background: transparent;
+  color: var(--vf-text);
+  font-weight: 600;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+}
+
+.vf-btn-ghost:hover {
+  border-color: var(--vf-accent);
+}
+
+.vf-link {
+  color: var(--vf-accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.vf-link:hover {
+  text-decoration: underline;
+}
+
+.vf-error {
+  color: var(--vf-danger);
+  font-size: 0.875rem;
+  margin-top: 0.35rem;
+}
+
+.vf-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid var(--vf-accent);
+  color: var(--vf-accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.7rem;
+}
+
+.vf-chip.advanced {
+  border-color: #fb923c;
+  color: #fb923c;
+}
