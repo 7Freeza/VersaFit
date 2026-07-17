@@ -1,4 +1,4 @@
-/* Registra rutas y busca cual coincide con el hash — commit: feat: registro de rutas y coincidencia por hash */
+/* Registra rutas y busca cual coincide con el hash */
 const routes = []
 
 export function addRoute(path, handler) {
@@ -17,7 +17,7 @@ function matchRoute(hashPath) {
         names.push(name)
         return '([^/]+)'
       })
-/* Arma la expresion regular de la ruta — commit: feat: registro de rutas y coincidencia por hash */
+/* Arma la expresion regular de la ruta */
     const regex = new RegExp(`^${pattern}$`)
     const match = pathOnly.match(regex)
 
@@ -41,7 +41,7 @@ export function navigate(path) {
   }
   window.location.hash = next
 }
-/* Arranca el router y escucha cambios de hash — commit: feat: arranque del router */
+/* Arranca el router y escucha cambios de hash*/
 export function startRouter(root) {
   async function render() {
     const matched = matchRoute(window.location.hash || '#/')
@@ -65,7 +65,7 @@ export function startRouter(root) {
       path: matched.path,
     })
   }
-/* Repinta cuando cambia el hash o el tema — commit: feat: arranque del router */
+/* Repinta cuando cambia el hash o el tema */
   window.addEventListener('hashchange', render)
   window.addEventListener('versafit:theme', render)
   render()
