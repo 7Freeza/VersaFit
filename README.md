@@ -112,4 +112,8 @@ The schema follows the logic of `DB-Versafit.sql`:
 
 ## Authors
 
--Juan Varela, Juan Rangel, Jonathan Escorcia, Sebastián Ropain and Isaac 
+- Juan Varela
+- Juan Rangel
+- Jonathan Escorcia
+- Sebastián Ropain
+- Isaac Ordoñez
