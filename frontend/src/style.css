@@ -339,3 +339,56 @@ html.light .vf-page {
   border-radius: 0.85rem;
   padding: 0.35rem;
 }
+
+.weight-history-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 0.65rem;
+  font-size: 0.9rem;
+}
+
+.weight-history-row:nth-child(odd) {
+  background: color-mix(in srgb, var(--vf-input) 80%, transparent);
+}
+
+/* Checkbox rows for routine detail */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border: 1px solid var(--vf-border);
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.65rem;
+  background: color-mix(in srgb, var(--vf-card) 85%, transparent);
+}
+
+.check-row.done {
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
+.check-row input[type="checkbox"] {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--vf-accent);
+}
+
+.filter-pill {
+  border-radius: 9999px;
+  border: 1px solid var(--vf-border);
+  background: transparent;
+  color: var(--vf-text);
+  padding: 0.45rem 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter-pill.active {
+  background: var(--vf-accent);
+  border-color: var(--vf-accent);
+  color: #052e16;
+}
