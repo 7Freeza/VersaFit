@@ -164,3 +164,178 @@ html.light .vf-page {
   border-color: #fb923c;
   color: #fb923c;
 }
+
+.vf-option {
+  width: 100%;
+  text-align: left;
+  border-radius: 0.9rem;
+  border: 1px solid var(--vf-border);
+  background: transparent;
+  color: var(--vf-text);
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  margin-bottom: 0.65rem;
+}
+
+.vf-option.selected {
+  border-color: var(--vf-accent);
+  background: color-mix(in srgb, var(--vf-accent) 12%, transparent);
+}
+
+.vf-progress-bar {
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--vf-border);
+  overflow: hidden;
+}
+
+.vf-progress-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--vf-accent);
+}
+
+.toast {
+  min-width: 240px;
+  max-width: 360px;
+  border-radius: 0.85rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--vf-border);
+  background: var(--vf-card);
+  color: var(--vf-text);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.toast.success {
+  border-color: color-mix(in srgb, var(--vf-accent) 60%, var(--vf-border));
+}
+
+.toast.error {
+  border-color: color-mix(in srgb, var(--vf-danger) 60%, var(--vf-border));
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Landing module cards */
+.module-card {
+  border-radius: 1rem;
+  border: 1px solid var(--vf-border);
+  background: color-mix(in srgb, var(--vf-card) 88%, transparent);
+  padding: 1.4rem;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.module-card:hover {
+  border-color: color-mix(in srgb, var(--vf-accent) 55%, var(--vf-border));
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.module-card-soon {
+  border-color: var(--vf-border);
+}
+
+.module-card-soon:hover {
+  border-color: color-mix(in srgb, var(--vf-muted) 50%, var(--vf-border));
+}
+
+/* Eagle mascot on landing */
+.eagle-hero {
+  width: min(420px, 90%);
+  height: auto;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.45));
+  animation: eagle-float 4.5s ease-in-out infinite;
+}
+
+@keyframes eagle-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Day pills in weekly plan */
+.day-pill {
+  min-width: 4.5rem;
+  border-radius: 0.9rem;
+  border: 1px solid var(--vf-border);
+  background: color-mix(in srgb, var(--vf-card) 90%, transparent);
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  color: var(--vf-text);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.day-pill:hover {
+  border-color: color-mix(in srgb, var(--vf-accent) 45%, var(--vf-border));
+}
+
+.day-pill.status-complete {
+  border-color: var(--vf-accent);
+  background: color-mix(in srgb, var(--vf-accent) 18%, transparent);
+  color: var(--vf-accent);
+  font-weight: 700;
+}
+
+.day-pill.status-incomplete {
+  border-color: color-mix(in srgb, var(--vf-danger) 55%, var(--vf-border));
+  background: color-mix(in srgb, var(--vf-danger) 10%, transparent);
+}
+
+.day-pill.status-pending {
+  border-color: color-mix(in srgb, var(--vf-accent) 40%, var(--vf-border));
+}
+
+.day-pill.status-upcoming,
+.day-pill.status-rest {
+  opacity: 0.9;
+}
+
+.day-pill .label {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.day-pill .sub {
+  font-size: 0.7rem;
+  color: var(--vf-muted);
+  margin-top: 0.25rem;
+}
+
+.day-pill .status-text {
+  font-size: 0.62rem;
+  margin-top: 0.35rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.day-pill.status-complete .status-text,
+.day-pill.status-complete .sub {
+  color: var(--vf-accent);
+}
+
+.day-pill.status-incomplete .status-text {
+  color: var(--vf-danger);
+}
+
+/* Weight history modal list */
+.weight-history-list {
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--vf-border);
+  border-radius: 0.85rem;
+  padding: 0.35rem;
+}
