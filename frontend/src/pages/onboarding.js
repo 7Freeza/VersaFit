@@ -177,4 +177,128 @@ export async function renderOnboarding(root, { navigate }) {
           })
           .join('')}
       `
-    }}}
+    }
+    /* Paso 4: preferencias e intensidad*/
+    return `
+      <div class="text-3xl mb-3">⚡</div>
+      <h2 class="text-2xl font-bold">Preferencias</h2>
+      <p class="text-[var(--vf-muted)] text-sm mb-4">¿Que tipo de ejercicio prefieres? Puedes marcar varias.</p>
+      ${PREFERENCE_OPTIONS.map(
+        (opt) => `
+          <button type="button" class="vf-option ${state.preferences.includes(opt.value) ? 'selected' : ''}" data-pref="${opt.value}">
+            ${opt.label}
+          </button>
+        `
+      ).join('')}
+
+      <p class="vf-label mt-4">Intensidad deseada</p>
+      ${INTENSITY_OPTIONS.map(
+        (opt) => `
+          <button type="button" class="vf-option ${state.intensity === opt.value ? 'selected' : ''}" data-intensity="${opt.value}">
+            ${opt.label}
+          </button>
+        `
+      ).join('')}
+    `
+  }
+/* Guarda los datos escritos en el paso 1*/
+  function collectStepOne() {
+    state.fullName = root.querySelector('#fullName')?.value || ''
+    state.age = root.querySelector('#age')?.value || ''
+    state.heightCm = root.querySelector('#heightCm')?.value || ''
+    state.weightKg = root.querySelector('#weightKg')?.value || ''
+    state.sex = root.querySelector('#sex')?.value || 'Other'
+  }
+
+  function wireStepEvents() {
+    root.querySelector('[data-action="back"]')?.addEventListener('click', () => {
+      if (step === 1) return
+      if (step === 2) collectStepOne()
+      step -= 1
+      paint()
+    })
+
+    root.querySelectorAll('[data-activity]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.activityLevel = btn.getAttribute('data-activity')
+        paint()
+      })
+    })
+
+    root.querySelectorAll('[data-objective]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.objectiveId = Number(btn.getAttribute('data-objective'))
+        paint()
+      })
+    })
+/* Marca la preferencia de ejercicio seleccionada*/
+    root.querySelectorAll('[data-pref]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const value = btn.getAttribute('data-pref')
+        if (state.preferences.includes(value)) {
+          state.preferences = state.preferences.filter((p) => p !== value)
+        } else {
+          state.preferences = [...state.preferences, value]
+        }
+        paint()
+      })
+    })
+
+    root.querySelectorAll('[data-intensity]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.intensity = btn.getAttribute('data-intensity')
+        paint()
+      })
+    })
+
+    root.querySelector('[data-action="next"]')?.addEventListener('click', async () => {
+      if (step === 1) collectStepOne()
+
+      const errors = validateOnboardingStep(step, state)
+      const formError = root.querySelector('[data-error="form"]')
+
+      if (Object.keys(errors).length) {
+        formError.textContent = Object.values(errors)[0]
+        formError.classList.remove('hidden')
+        return
+      }
+/* Avanza de paso o envia el formulario completo*/
+      formError.classList.add('hidden')
+
+      if (step < 4) {
+        step += 1s
+        paint()
+        return
+      }
+
+      const button = root.querySelector('[data-action="next"]')
+      button.disabled = true
+      button.textContent = 'Generando tu plan...'
+
+      try {
+        const payload = {
+          fullName: state.fullName,
+          age: Number(state.age),
+          heightCm: Number(state.heightCm),
+          weightKg: Number(state.weightKg),sssssssssssssss
+          activityLevel: state.activityLevel,
+          objectiveId: Number(state.objectiveId),
+          intensity: state.intensity,
+          preferences: state.preferences,
+        }
+
+        const data = await api.completeOnboarding(payload)
+        setStoredUser(data.user)
+        showToast('Plan personalizado listo', 'success')
+        navigate('/dashboard')
+      } catch (error) {
+        formError.textContent = error.message || 'No se pudo completar el registro'
+        formError.classList.remove('hidden')
+        button.disabled = false
+        button.textContent = '¡Empezar a entrenar! →'
+      }
+    })
+  }
+
+  paint()
+}
