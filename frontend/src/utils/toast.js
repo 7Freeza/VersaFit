@@ -1,4 +1,4 @@
-/* Muestra notificaciones flotantes que desaparecen solas — commit: feat: notificaciones tipo toast */
+/* Muestra notificaciones flotantes que desaparecen solas */
 
 export function showToast(message, type = 'info') {
   const root = document.getElementById('toast-root')
