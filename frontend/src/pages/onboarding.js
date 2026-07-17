@@ -280,7 +280,8 @@ export async function renderOnboarding(root, { navigate }) {
           fullName: state.fullName,
           age: Number(state.age),
           heightCm: Number(state.heightCm),
-          weightKg: Number(state.weightKg),sssssssssssssss
+          weightKg: Number(state.weightKg),
+          sex: state.sex,
           activityLevel: state.activityLevel,
           objectiveId: Number(state.objectiveId),
           intensity: state.intensity,
