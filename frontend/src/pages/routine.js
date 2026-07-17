@@ -127,4 +127,53 @@ export async function renderRoutine(root, { navigate, params }) {
         </main>
       </div>
     `
-}}
+    /* Conecta los botones despues de pintar*/
+    bindThemeToggle(root)
+    bindLogout(navigate)
+
+    root.querySelector('[data-back]')?.addEventListener('click', () => navigate('/dashboard'))
+
+    root.querySelector('[data-action="start"]')?.addEventListener('click', async () => {
+      if (session) return
+      try {
+        const data = await api.startRoutine(routineId)
+        detail.session = data.session
+        detail.checkoffs = data.checkoffs
+        showToast('Rutina iniciada. ¡A entrenar!', 'success')
+        await paint()
+      } catch (error) {
+        showToast(error.message, 'error')
+      }
+    })
+/* Marca un ejercicio como completado */
+    root.querySelectorAll('[data-exercise]').forEach((input) => {
+      input.addEventListener('change', async () => {
+        if (!detail.session) return
+        const exerciseId = Number(input.getAttribute('data-exercise'))
+        try {
+          const result = await api.toggleExercise(
+            detail.session.sessionId,
+            exerciseId,
+            input.checked
+          )
+
+          const item = detail.checkoffs.find((c) => c.exerciseId === exerciseId)
+          if (item) item.isDone = input.checked
+
+          if (result.sessionCompleted) {
+            detail.session.isCompleted = true
+            showToast('¡Rutina completada!', 'success')
+          }
+
+          await paint()
+        } catch (error) {
+          showToast(error.message, 'error')
+          input.checked = !input.checked
+        }
+      })
+    })
+  }
+
+  await paint()
+}
+
