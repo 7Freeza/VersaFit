@@ -59,4 +59,22 @@ export function renderRegister(root, { navigate }) {
       </div>
     </div>
   `
+  /* Conecta los eventos del formulario */
+  bindThemeToggle(root)
+  root.querySelector('[data-go="back"]')?.addEventListener('click', () => navigate('/'))
+
+  root.querySelector('[data-toggle-pass]')?.addEventListener('click', () => {
+    const input = root.querySelector('#password')
+    input.type = input.type === 'password' ? 'text' : 'password'
+  })
+
+  const form = root.querySelector('#register-form')
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
+
+    const payload = {
+      fullName: form.fullName.value,
+      email: form.email.value,
+      password: form.password.value,
+    })
 }
