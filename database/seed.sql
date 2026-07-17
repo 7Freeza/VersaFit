@@ -3,19 +3,19 @@
 --OBJECTIVES 
 
 INSERT INTO objectives (name , description) VALUES
-  ('lose weight','Reduce body fat and improve body composition'),
-  ('Build muscle','Increase muscle mass and strengh'),
+  ('Lose weight','Reduce body fat and improve body composition'),
+  ('Build muscle','Increase muscle mass and strength'),
   ('Improve cardio','Improve health and cardiovascular endurance'),
   ('Stay active','Stay active and reduce stress');
 
 --USER DEMO PASSWORD (BCRYPT HASH)
 
-INSERT INTO users (email, password_hash, full_name)VALUES
-  {
-    'dem@versafit.com',
-    '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy'
+INSERT INTO users (email, password_hash, full_name) VALUES
+  (
+    'demo@versafit.com',
+    '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
     'Demo User'
-  };
+  );
 
 -- PHYSICAL PROFILES
 
@@ -23,7 +23,7 @@ INSERT INTO physical_profiles(
   user_id, objective_id, age, height_cm, sex,
   activity_level, intensity, preferences, onboarding_done
 )VALUES(
-  1,2,28,178.00,'M',
+  1,2,28,175.00,'M',
   'moderate', 'medium', 'gym,running', TRUE
 );
 
@@ -37,40 +37,40 @@ INSERT INTO weight_logs (profile_id, weight_kg, recorded_at)VALUES
 --HABITS
 
 INSERT INTO habits (user_id, habit_type, name, target_frequency)VALUES
-  (1, 'exercise' , 'weekly training', 4);
+  (1, 'exercise' , 'Weekly training', 4);
 
 --TRAINING PLANS
 
 INSERT INTO training_plans (habit_id, objective_id, duration_weeks, is_active)VALUES
-  (1, 2, 4, TRUE)
+  (1, 2, 4, TRUE);
 
 --EXERCISE
 
 INSERT INTO exercises (name, muscle_group, description)VALUES
-  ('Bench Press', 'Chest', 'Brabell press on a flat bench'),
+  ('Bench Press', 'Chest', 'Barbell press on a flat bench'),
   ('Pull-ups', 'Back', 'Bodyweight pull-ups'),
   ('Military Press', 'Shoulders', 'Overhead barbell press'),
   ('Bicep Curl', 'Arms', 'Dumbbell bicep curls'),
   ('Squats', 'Legs', 'Barbell or bodyweight squats'),
   ('Deadlift', 'Legs', 'Conventional deadlift'),
-  ('Luges', 'Legs', 'Walking or stationary lunges'),
+  ('Lunges', 'Legs', 'Walking or stationary lunges'),
   ('Plank', 'Core', 'Isometric core hold'),
   ('Jumping Jacks', 'Cardio', 'Full body warm-up cardio'),
-  ('Burpees', 'Full body', 'Hight intensity full body movement'),
+  ('Burpees', 'Full body', 'High intensity full body movement'),
   ('Mountain Climbers', 'Cardio', 'Core and cardio drill'),
-  ('Running Intervals', 'Cardio', 'Alternating spring and jog'),
+  ('Running Intervals', 'Cardio', 'Alternating sprint and jog'),
   ('Cycling', 'Cardio', 'Indoor or outdoor cycling'),
   ('Yoga Flow', 'Flexibility', 'Gentle mobility flow'),
   ('Hip Stretch', 'Flexibility', 'Hip opener stretch');
   
 --ROUTINE
-INSERT INTO routine (plan_id, name, description, category, duration_min, estimated_kcal)VALUES
-  (1, 'Full Upper Body', 'Chest, back, shoulders and arms in one powerful session.', 'strength', 450, 380),
-  (1, 'Interval Run', 'Burn fat improve cardiovascualar endurace.', 'beginner', 30, 310)
-  (1, 'HIIT Full Body', 'Hight intensity, maximum results in minimum time.', 'advacend', 20, 290),
-  (1, 'Recovery Yoga', 'Reduce muscle tension and improve joint mobility.', 'all levels', 35, 120),
-  (1, 'Legs and Glutes', 'Squats, deadlifts and lunges for strong legs.', 'intermediate', 50, 420),
-  (1, 'Indoor Cycling', 'Pédal with music and burn calories with low impact', 'beginner', 40, 350)
+INSERT INTO routines (plan_id, name, description, category, difficulty, duration_min, estimated_kcal)VALUES
+  (1, 'Full Upper Body', 'Chest, back, shoulders and arms in one powerful session.', 'strength', 'intermediate', 45, 380),
+  (1, 'Interval Run', 'Burn fat and improve cardiovascular endurance.', 'cardio', 'beginner', 30, 310),
+  (1, 'HIIT Full Body', 'High intensity, maximum results in minimum time.', 'hiit', 'advanced', 20, 290),
+  (1, 'Recovery Yoga', 'Reduce muscle tension and improve joint mobility.', 'flexibility', 'all levels', 35, 120),
+  (1, 'Legs and Glutes', 'Squats, deadlifts and lunges for strong legs.', 'strength', 'intermediate', 50, 420),
+  (1, 'Indoor Cycling', 'Pedal with music and burn calories with low impact.', 'cardio', 'beginner', 40, 350);
 
 --ROUTINE EXERCISES
 
@@ -99,10 +99,9 @@ INSERT INTO routine_exercises (routine_id, exercise_id, sets, reps, rest_seconds
 
 INSERT INTO weekly_schedule (user_id, day_name, routine_id, is_rest_day)VALUES
   (1, 'Monday', 1, FALSE),
-  (1, 'Tuesday' 2, FALSE),
-  (1, 'Wednesday' NULL, TRUE),
-  (1, 'Thursday' 3, FALSE),
-  (1, 'Friday' 5, FALSE),
-  (1, 'Saturday' 4, FALSE),
-  (1, 'Sunday' NULL, TRUE);
-  
+  (1, 'Tuesday', 2, FALSE),
+  (1, 'Wednesday', NULL, TRUE),
+  (1, 'Thursday', 3, FALSE),
+  (1, 'Friday', 5, FALSE),
+  (1, 'Saturday', 4, FALSE),
+  (1, 'Sunday', NULL, TRUE);
